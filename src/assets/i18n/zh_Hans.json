@@ -1,1 +1,24 @@
-{}
+{
+    "TABS": {
+        "OVERVIEW": {
+            "CONTRACT_START": "条约开始时间",
+            "NAME": "名称",
+            "DESCRIPTION": "描述",
+            "COSTS": "费用",
+            "BILLING": "账单",
+            "BILLING_START": "起始时间",
+            "BILLING_EVERY": "周期间隔",
+            "CONTRACT": "合同",
+            "MINIMUM_CONTRACT_DURATION": "合同期限",
+            "EXTENSION_AFTER_MINIMUM_CONTRACT_DURATION": "合同延期"
+        }
+    },
+    "APP": {
+        "NAME": "Subz"
+    },
+    "GENERAL": {
+        "CANCEL": "取消",
+        "DONE": "完成",
+        "OK": "确定"
+    }
+}
