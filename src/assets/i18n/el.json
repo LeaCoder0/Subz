@@ -1,1 +1,87 @@
-{}
+{
+    "APP": {
+        "NAME": "Subz",
+        "SHORT_DESCRIPTION": "Εφαρμογή για προστασία της ιδιωτικότητας και τη διαχείριση συνδρομών και συμβολαίων, με δυνατότητα ειδοποιήσεων."
+    },
+    "GENERAL": {
+        "CANCEL": "Ακύρωση",
+        "OK": "Εντάξει",
+        "DONE": "Ολοκληρώθηκε",
+        "ASC": "Αύξουσα",
+        "DESC": "Φθίνουσα"
+    },
+    "TABS": {
+        "OVERVIEW": {
+            "OVERVIEW": "Επισκόπηση",
+            "SEARCH_FOR_NAME_AND_DESCRIPTION": "Όνομα ή περιγραφή",
+            "TOTAL_COSTS": "Συνολικό Κόστος",
+            "ADD_SUBSCRIPTION": "Προσθήκη συνδρομής",
+            "GENERAL_INFORMATION": "Γενικές πληροφορίες",
+            "NAME": "Όνομα",
+            "DESCRIPTION": "Περιγραφή",
+            "COSTS": "Κόστη",
+            "BILLING": "Χρέωση",
+            "BILLING_START": "Έναρξη χρέωσης",
+            "BILLING_EVERY": "Χρέωση κάθε",
+            "CONTRACT": "Συμβόλαιο",
+            "CONTRACT_START": "Έναρξη σύμβασης",
+            "MINIMUM_CONTRACT_DURATION": "Διάρκεια συμβολαίου",
+            "EXTENSION_AFTER_MINIMUM_CONTRACT_DURATION": "Παράταση σύμβασης",
+            "CANCELATION_PERIOD": "Προθεσμία ακύρωσης",
+            "NOTIFICATION_BEFORE_CANCELATION_PERIOD_STARTS_ON": "Ειδοποίηση πριν από την προθεσμία ακύρωσης, το νωρίτερο στις",
+            "NOTIFICATION_BEFORE_CANCELATION_PERIOD_IN_DAYS": "Ειδοποίηση πριν από την προθεσμία ακύρωσης, σε ημέρες",
+            "TILE_COLOR": "Χρώμα πλακιδίου",
+            "REMOVE_SUBSCRIPTION": "Κατάργηση συνδρομής",
+            "REMOVE_SUBSCRIPTION_ALERT_HEADER": "Είσαι σίγουρος;",
+            "REMOVE_SUBSCRIPTION_ALERT_MESSAGE": "Σίγουρα να καταργηθεί η συνδρομή;",
+            "SORT_BY": "Ταξινόμηση κατά",
+            "COSTS_PER_PERIOD": "Κόστος ανά περίοδο",
+            "NEXT_PAYMENT": "Επόμενη πληρωμή",
+            "NEXT_SUBSCRIPTION_EXTENSION": "Επόμενη παράταση σύμβασης",
+            "DAYS_UNTIL_NEXT_BILLING_ON_HELPER": "ημέρες μέχρι την επόμενη χρέωση στις",
+            "DAYS_UNTIL_NEXT_CANCELATION_PERIOD_DEADLINE_ON_HELPER": "ημέρες μέχρι την τελευταία δυνατή ακύρωση εντός της προθεσμίας στις",
+            "CALENDAR_INTERVALS": {
+                "DAYS": "Ημέρες",
+                "WEEKS": "Εβδομάδες",
+                "MONTHS": "Μήνες",
+                "YEARS": "Χρόνια"
+            },
+            "NO_SUBSCRIPTION_HEADER": "Γεια σου!",
+            "NO_SUBSCRIPTION_TEXT": "Οι συνδρομές μπορούν να προστεθούν από το κουμπί «+» στην επάνω δεξιά πλευρά της οθόνης. Οι υπόλοιπες λειτουργίες στη γραμμή μενού παραμένουν απενεργοποιημένες μέχρι να προστεθούν δύο συνδρομές. Καλή διασκέδαση με το Subz!",
+            "MENU_BUTTONS_HELPER_HEADER": "Βοήθεια για τη γραμμή μενού",
+            "CHANGE_CHOOSEN_BILLING_INTERVAL_HELPER": "Αλλάξτε το εμφανιζόμενο διάστημα των εξόδων συνδρομών μεταξύ ετήσιου, μηνιαίου, εβδομαδιαίου και ημερήσιου.",
+            "SEARCH_HELPER": "Εμφάνιση μόνο των συνδρομών όπου το κείμενο αναζήτησης ταιριάζει με το όνομα ή την περιγραφή.",
+            "SORT_HELPER": "Ταξινόμηση συνδρομών κατά όνομα, κόστος, επόμενη χρέωση ή επόμενη παράταση σύμβασης.",
+            "ADD_SUBSCRIPTION_HELPER": "Προσθήκη νέας συνδρομής.",
+            "COLORS": {
+                "BLUE": "Μπλε",
+                "GREEN": "Πράσινο",
+                "YELLOW": "Κίτρινο",
+                "RED": "Κόκκινο",
+                "GREY": "Γκρι"
+            },
+            "MONTH_NAMES": {
+                "JANUARY": "Ιανουάριος",
+                "FEBRUARY": "Φεβρουάριος",
+                "MARCH": "Μάρτιος",
+                "APRIL": "Απρίλιος",
+                "MAI": "Μάιος",
+                "JUNE": "Ιούνιος",
+                "JULY": "Ιούλιος",
+                "AUGUST": "Αύγουστος",
+                "SEPTEMBER": "Σεπτέμβριος",
+                "OCTOBER": "Οκτώβριος",
+                "NOVEMBER": "Νοέμβριος",
+                "DECEMBER": "Δεκέμβριος"
+            }
+        },
+        "SETTINGS": {
+            "SETTINGS": "Ρυθμίσεις",
+            "UI": "Διεπαφή χρήστη",
+            "FORCE_DARK_MODE": "Εξαναγκασμός Σκοτεινής-Λειτουργίας",
+            "FORCE_DARK_MODE_HELPER": "Χρήση θέματος του συστήματος από προεπιλογή",
+            "CURRENCY": "Νόμισμα",
+            "DATE_FORMAT": "Μορφή ημερομηνίας"
+        }
+    }
+}
