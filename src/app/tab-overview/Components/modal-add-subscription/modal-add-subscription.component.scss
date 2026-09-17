@@ -1,17 +1,13 @@
-
-// The Android WebView does not repaint a colour input's native swatch when the
-// value is set programmatically -- it stays the default grey -- so appearance is
-// switched off and the background is bound to the current colour instead. The
-// element is still type=color, so tapping it opens the system picker.
+// Coloris provides the picker UI; the swatch that opens it is ours, because its
+// own .clr-field wrapper is only built for inputs present when Coloris inits.
 .color-swatch {
   appearance: none;
   -webkit-appearance: none;
   inline-size: 2.25rem;
   block-size: 1.75rem;
   padding: 0;
-  // colour comes from the template so the control stays visible even when
-  // the swatch matches the row it sits on
   border: 2px solid;
   border-radius: 4px;
+  color: transparent;   // hide the hex text; the row already previews the colour
   cursor: pointer;
 }

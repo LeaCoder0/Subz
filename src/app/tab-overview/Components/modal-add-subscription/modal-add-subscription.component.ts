@@ -1,5 +1,9 @@
 import { ChangeDetectorRef, Component, Input, OnInit, ViewChild, inject } from '@angular/core';
+import Coloris, { init as initColoris } from '@melloware/coloris';
+
 import { contrastHexFor, isPresetColor } from '../../subscription-color';
+import { subscriptionColors } from '../../SUBSCRIPTION_COLORS';
+
 import { addIcons } from 'ionicons';
 import { arrowBack, save } from 'ionicons/icons';
 import { DatePipe, LowerCasePipe, UpperCasePipe } from '@angular/common';
@@ -10,8 +14,18 @@ import { ISubscription } from '../../Interfaces/subscriptionInterface';
 import { StorageService } from '../../../Services/storage.service';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { billingIntervals } from '../../BILLING_INTERVALS';
-import { subscriptionColors } from '../../SUBSCRIPTION_COLORS';
+
 import { angularDateFormats, dateFormats } from '../../../tab-settings/region/DATE_FORMATS';
+
+/**
+ * The npm build of Coloris drops the auto-init that the browser bundle performs
+ * on DOM ready, so it has to be called by hand -- without it the picker element
+ * is never created and opening it throws. Once per app, not once per modal.
+ */
+let colorPickerReady = false;
+
+/** The preset palette as hex, offered as quick picks inside the picker. */
+const PRESET_SWATCHES = ['#3880ff', '#2dd36f', '#ffc409', '#eb445a', '#92949c'];
 
 @Component({
   selector: 'app-modal-add-subscription',
@@ -43,6 +57,35 @@ export class ModalAddSubscriptionComponent implements OnInit {
 
   currentYear = new Date().getFullYear();
   maxDate = `${new Date().getFullYear() + 5}-12-31`;
+
+  /**
+   * The app forces its own dark mode with a body class rather than relying on
+   * prefers-color-scheme, so Coloris's own 'auto' would not follow it -- the
+   * mode is read from the same class ThemeService sets.
+   */
+  private setupColorPicker() {
+    if (!colorPickerReady) {
+      initColoris();
+      colorPickerReady = true;
+    }
+
+    Coloris({
+      el: '[data-coloris]',
+      theme: 'default',
+      themeMode: document.body.classList.contains('dark') ? 'dark' : 'light',
+      format: 'hex',
+      alpha: false,
+      // Coloris only builds its .clr-field wrapper for inputs that exist at init
+      // time, and ours is added later by the template. Clicking still opens the
+      // picker because a string `el` binds through document-level delegation, so
+      // wrapping is off and the swatch below is ours.
+      wrap: false,
+      focusInput: false,
+      selectInput: false,
+      // the built-in palette, as quick picks alongside the full spectrum
+      swatches: PRESET_SWATCHES,
+    });
+  }
 
   get isPresetSelected(): boolean {
     return isPresetColor(this.subscriptionForm.value.color);
@@ -104,6 +147,8 @@ export class ModalAddSubscriptionComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.setupColorPicker();
+
     this.retrieveSettingsFromStorage().then(() => {
       if (this.existingSubscription) {
         // Update form to existing subscription

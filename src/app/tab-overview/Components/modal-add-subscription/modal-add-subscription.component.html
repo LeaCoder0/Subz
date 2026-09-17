@@ -55,11 +55,14 @@
         </ion-select>
 
         @if (!isPresetSelected) {
-          <!-- native input so the WebView shows the OS colour picker -->
+          <!-- Coloris binds by delegation on [data-coloris] and fires a native
+               input event, so this stays a plain input as far as Angular knows -->
           <input
             slot="end"
             class="color-swatch"
-            type="color"
+            type="text"
+            data-coloris
+            readonly
             [value]="customColorValue"
             [style.background-color]="customColorValue"
             [style.border-color]="previewContrastHex"
