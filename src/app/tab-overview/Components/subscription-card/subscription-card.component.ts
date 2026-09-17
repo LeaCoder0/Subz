@@ -1,5 +1,5 @@
 import { Component, Input, inject } from '@angular/core';
-import { contrastHexFor, isPresetColor } from '../../subscription-color';
+import { chipOverlayFor, contrastHexFor, isPresetColor } from '../../subscription-color';
 import { addIcons } from 'ionicons';
 import { card, notifications, warning } from 'ionicons/icons';
 import { DatePipe, DecimalPipe, LowerCasePipe, SlicePipe, TitleCasePipe } from '@angular/common';
@@ -21,6 +21,23 @@ export class SubscriptionCardComponent {
   /** Presets go through Ionic's theme colours; anything else is styled inline. */
   get isPreset(): boolean {
     return isPresetColor(this.subscription.color);
+  }
+
+  /**
+   * A preset resolves to a different hex per theme -- blue is #3880ff in light
+   * and #afccff in dark -- so the live variable is read rather than assumed.
+   */
+  private get resolvedTileColor(): string {
+    if (!this.isPreset) { return this.subscription.color; }
+
+    const themed = getComputedStyle(document.body)
+      .getPropertyValue(`--ion-color-${this.subscription.color.toLowerCase()}`).trim();
+
+    return themed || this.subscription.color;
+  }
+
+  get chipBackground(): string {
+    return chipOverlayFor(this.resolvedTileColor);
   }
 
   /** Readable text colour for a custom tile; presets keep Ionic's own pairing. */

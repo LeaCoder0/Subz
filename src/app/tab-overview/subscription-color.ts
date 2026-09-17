@@ -70,3 +70,20 @@ const CONTRAST_HEX = { light: '#f4f5f8', dark: '#222428' } as const;
 export function contrastHexFor(color: string): string {
   return CONTRAST_HEX[contrastFor(color)];
 }
+
+/**
+ * Background for the small day-count chips that sit on a tile.
+ *
+ * Ionic's default is a fixed `rgba(255, 255, 255, 0.12)` whatever the tile is,
+ * which all but disappears on light colours -- measured at 1.30:1 against the
+ * app's pale blue and 1.31:1 against a pale peach. Tinting in the same direction
+ * as the text, at 0.24, puts every preset and custom colour in a 1.6-2.2 band.
+ *
+ * Not done with color-mix(): the Android WebView is only guaranteed to be as new
+ * as the device allows, and it is unsupported before Chrome 111.
+ */
+export function chipOverlayFor(tileColor: string): string {
+  return contrastFor(tileColor) === 'dark'
+    ? 'rgba(0, 0, 0, 0.24)'
+    : 'rgba(255, 255, 255, 0.24)';
+}

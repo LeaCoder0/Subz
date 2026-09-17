@@ -1,4 +1,4 @@
-import { contrastFor, contrastHexFor, isPresetColor } from './subscription-color';
+import { chipOverlayFor, contrastFor, contrastHexFor, isPresetColor } from './subscription-color';
 
 describe('isPresetColor', () => {
   it('recognises the built-in colours whatever the casing', () => {
@@ -57,5 +57,25 @@ describe('contrastHexFor', () => {
   it('pairs light text with dark tiles and dark text with light tiles', () => {
     expect(contrastHexFor('#22194d')).toBe('#f4f5f8');
     expect(contrastHexFor('#ffffaa')).toBe('#222428');
+  });
+});
+
+describe('chipOverlayFor', () => {
+  it('darkens on light tiles, where a white overlay would vanish', () => {
+    expect(chipOverlayFor('#ffddaa')).toBe('rgba(0, 0, 0, 0.24)');   // pale peach
+    expect(chipOverlayFor('#afccff')).toBe('rgba(0, 0, 0, 0.24)');   // the dark-theme blue
+    expect(chipOverlayFor('#ffffff')).toBe('rgba(0, 0, 0, 0.24)');
+  });
+
+  it('lightens on dark tiles', () => {
+    expect(chipOverlayFor('#22194d')).toBe('rgba(255, 255, 255, 0.24)');
+    expect(chipOverlayFor('#1f1f1f')).toBe('rgba(255, 255, 255, 0.24)');
+  });
+
+  it('tints in the same direction as the text, so both stay legible together', () => {
+    for (const tile of ['#ffddaa', '#afccff', '#2dd36f', '#22194d', '#1f1f1f']) {
+      const wantsDarkText = contrastFor(tile) === 'dark';
+      expect(chipOverlayFor(tile).startsWith('rgba(0, 0, 0')).toBe(wantsDarkText);
+    }
   });
 });
