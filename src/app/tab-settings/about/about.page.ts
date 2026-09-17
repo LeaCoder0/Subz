@@ -22,6 +22,7 @@ export class AboutPage implements OnInit {
   constructor() {
     addIcons({ arrowBack });
 
+
  }
 
   ngOnInit() {

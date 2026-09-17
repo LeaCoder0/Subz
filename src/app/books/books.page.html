@@ -1,0 +1,48 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>{{ 'BOOKS.BOOKS' | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="primary" routerLink="/settings">
+        <ion-icon slot="icon-only" md="settings"></ion-icon>
+      </ion-button>
+      <ion-button color="primary" (click)="addBook()">
+        <ion-icon slot="icon-only" md="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (books.length === 0) {
+    <ion-list>
+      <ion-item lines="none">
+        <ion-label class="ion-text-wrap">{{ 'BOOKS.NO_BOOKS' | translate }}</ion-label>
+      </ion-item>
+    </ion-list>
+  }
+
+  <ion-list>
+    <ion-reorder-group [disabled]="false" (ionItemReorder)="handleReorder($any($event))">
+      @for (book of books; track book.id) {
+        <ion-item button (click)="openBook(book)">
+          <ion-label>
+            {{ book.name }}
+            <ion-note class="book-total">
+              {{ totals[book.id] | number : '1.2-2' : translateService.currentLang() }}
+              {{ settings?.currency || '€' }}
+            </ion-note>
+          </ion-label>
+
+          <ion-button fill="clear" slot="end" (click)="renameBook(book, $event)">
+            <ion-icon slot="icon-only" md="create"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" slot="end" color="danger" (click)="deleteBook(book, $event)">
+            <ion-icon slot="icon-only" md="trash"></ion-icon>
+          </ion-button>
+
+          <ion-reorder slot="end"></ion-reorder>
+        </ion-item>
+      }
+    </ion-reorder-group>
+  </ion-list>
+</ion-content>

@@ -1,6 +1,8 @@
 // Don't forget to apply changes to the validation in storage.service.restoreAllData() corresponding to the changes here
 export interface ISubscription {
     id: number; // unique, 12 char long
+    bookId?: number; // IBook.id this entry belongs to. Optional only so pre-books
+                     // data type-checks; the migration guarantees it is always set.
     name: string;
     description?: string;
     cost: number;

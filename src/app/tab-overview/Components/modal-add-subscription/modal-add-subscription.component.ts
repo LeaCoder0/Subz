@@ -45,6 +45,7 @@ export class ModalAddSubscriptionComponent implements OnInit {
   constructor() {
     addIcons({ arrowBack, save });
 
+
     this.subscriptionForm = this.formBuilder.group({
       name: ['', Validators.required],
       description: [''],

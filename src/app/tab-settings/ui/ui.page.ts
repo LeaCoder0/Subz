@@ -31,6 +31,7 @@ export class UiPage {
     addIcons({ arrowBack, calendar, helpBuoy, moon });
 
 
+
     this.settingsForm = this.formBuilder.group({
       forceDarkMode: false,
       notificationBeforeCancelationPeriodInDays: null

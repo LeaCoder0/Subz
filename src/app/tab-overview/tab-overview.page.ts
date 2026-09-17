@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, ViewChild, inject } from '@angular/core';
 import { addIcons } from 'ionicons';
-import { add, closeOutline, filter, search, swapHorizontal } from 'ionicons/icons';
+import { add, arrowBack, closeOutline, filter, search, swapHorizontal } from 'ionicons/icons';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DecimalPipe, SlicePipe, TitleCasePipe } from '@angular/common';
 import { SubscriptionCardComponent } from './Components/subscription-card/subscription-card.component';
 import { SearchSubscriptionsPipe } from './Pipes/search-subscriptions.pipe';
@@ -21,7 +22,7 @@ import { SplashScreen } from '@capacitor/splash-screen';
   selector: 'app-tab-overview',
   templateUrl: 'tab-overview.page.html',
   styleUrls: ['tab-overview.page.scss'],
-  imports: [IonButton, IonButtons, IonCard, IonCardContent, IonCol, IonContent, IonFabButton, IonGrid, IonHeader, IonIcon, IonItem, IonLabel, IonRow, IonSearchbar, IonTitle, IonToolbar, FormsModule, TranslatePipe, SearchSubscriptionsPipe, SortSubscriptionsPipe, TotalCostByBillingIntervalPipe, SubscriptionCardComponent, DecimalPipe, SlicePipe, TitleCasePipe],
+  imports: [IonButton, IonButtons, IonCard, IonCardContent, IonCol, IonContent, IonFabButton, IonGrid, IonHeader, IonIcon, IonItem, IonLabel, IonRow, IonSearchbar, IonTitle, IonToolbar, FormsModule, RouterLink, TranslatePipe, SearchSubscriptionsPipe, SortSubscriptionsPipe, TotalCostByBillingIntervalPipe, SubscriptionCardComponent, DecimalPipe, SlicePipe, TitleCasePipe],
 })
 export class TabOverviewPage {
   alertController = inject(AlertController);
@@ -31,8 +32,11 @@ export class TabOverviewPage {
   notificationService = inject(NotificationService);
 
   private changeDetectorRef = inject(ChangeDetectorRef);
+  private activatedRoute = inject(ActivatedRoute);
   @ViewChild('searchSubscriptions', { static: false }) searchSubscriptions: IonSearchbar;
 
+  /** The book this overview is scoped to; set from the route before any load. */
+  bookId: number;
   subscriptions: ISubscription[] = [];
   areSubscriptionsFetched = false;
   availableBillingIntervals = billingIntervals;
@@ -43,12 +47,14 @@ export class TabOverviewPage {
   isSearchbarEnabled = false;
 
   constructor() {
-    addIcons({ add, closeOutline, filter, search, swapHorizontal });
+    addIcons({ add, arrowBack, closeOutline, filter, search, swapHorizontal });
+
 
 }
 
   // Gets fired every page view so that settings which were made during runtime, etc. are immediately there
   ionViewWillEnter() {
+    this.bookId = Number(this.activatedRoute.snapshot.paramMap.get('bookId'));
     this.retrieveSettingsFromStorage();
     this.retrieveSubscriptionsFromStorage().then(() => {
       this.areSubscriptionsFetched = true;
@@ -62,6 +68,7 @@ export class TabOverviewPage {
     do { id = Math.floor((Math.random() * 999999999999) + 1); } while (this.subscriptions.some(subscription => subscription.id === id));
 
     sub.id = id;
+    sub.bookId = this.bookId;
     sub.created = Date.now();
     sub.lastEdited = sub.created;
 
@@ -92,12 +99,12 @@ export class TabOverviewPage {
   }
 
   async saveSubscriptionsToStorage() {
-    await this.storageService.saveSubscriptionsToStorage(this.subscriptions)
+    await this.storageService.saveBookSubscriptionsToStorage(this.bookId, this.subscriptions)
       .then(() => { this.notificationService.scheduleNotifications(); });
   }
 
   async retrieveSubscriptionsFromStorage() {
-    this.subscriptions = await this.storageService.retrieveSubscriptionsFromStorage();
+    this.subscriptions = await this.storageService.retrieveSubscriptionsFromStorage(this.bookId);
     this.changeDetectorRef.detectChanges();
   }
 

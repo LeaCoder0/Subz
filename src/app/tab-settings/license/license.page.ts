@@ -18,6 +18,7 @@ export class LicensePage {
   constructor() {
     addIcons({ arrowBack });
 
+
  }
 
 }

@@ -14,7 +14,6 @@ import localeRu from '@angular/common/locales/ru';
 import localeSv from '@angular/common/locales/sv';
 import localeTa from '@angular/common/locales/ta';
 import localeZh from '@angular/common/locales/zh-Hans';
-import { TabHideService } from './Services/tab-hide.service';
 import { Router } from '@angular/router';
 import { ThemeService } from './Services/theme.service';
 import { NotificationService } from './Services/notification.service';
@@ -47,7 +46,6 @@ export class AppComponent {
   private platform = inject(Platform);
   private translateService = inject(TranslateService);
   private router = inject(Router);
-  tabHideService = inject(TabHideService);
   notificationService = inject(NotificationService);
   themeService = inject(ThemeService);
 
@@ -59,17 +57,16 @@ export class AppComponent {
       this.themeService.applyTheme();
 
       this.platform.backButton.subscribeWithPriority(0, () => {
-        const url = this.router.url;
+        // The books list is the root of the app, so back exits from there.
+        // Anywhere else, back goes up one path segment.
+        const segments = this.router.url.split('/').filter(segment => segment.length > 0);
 
-        if (url === '/tabs/overview' || url === '/tabs/settings') {
+        if (segments.length <= 1) {
           App.exitApp();
-        } else if (url === '/tabs/settings/ui'
-          || url === '/tabs/settings/region'
-          || url === '/tabs/settings/data-management'
-          || url === '/tabs/settings/license'
-          || url === '/tabs/settings/about') {
-          this.router.navigate(['/tabs/settings']);
+          return;
         }
+
+        this.router.navigate(['/' + segments.slice(0, -1).join('/')]);
       });
     });
   }

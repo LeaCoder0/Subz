@@ -24,6 +24,7 @@ export class DataManagementPage {
   constructor() {
     addIcons({ archive, arrowBack, refresh });
 
+
  }
 
   async backup(): Promise<void> {

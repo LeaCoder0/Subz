@@ -35,6 +35,7 @@ export class RegionPage {
     addIcons({ arrowBack, calendar, cash });
 
 
+
     this.settingsForm = this.formBuilder.group({
       currency: this.currencyList[0],
       dateFormat: this.dateFormatList[0],

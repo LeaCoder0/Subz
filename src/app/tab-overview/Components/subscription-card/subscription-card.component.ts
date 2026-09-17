@@ -14,7 +14,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
   selector: 'app-subscription-card',
   templateUrl: './subscription-card.component.html',
   styleUrls: ['./subscription-card.component.scss'],
-  imports: [IonCard, IonCardContent, IonChip, IonCol, IonGrid, IonIcon, IonLabel, IonRow, TranslatePipe, CostByBillingIntervalPipe, NextBillingPipe, NextCancelationPeriodDeadlinePipe, NotificationTimeForNextCancelationPeriodDeadlinePipe, DecimalPipe, LowerCasePipe, SlicePipe, TitleCasePipe],
+  imports: [IonCard, IonCardContent, IonChip, IonCol, IonGrid, IonIcon, IonLabel, IonRow, TranslatePipe, NextBillingPipe, NextCancelationPeriodDeadlinePipe, NotificationTimeForNextCancelationPeriodDeadlinePipe, CostByBillingIntervalPipe, DecimalPipe, LowerCasePipe, SlicePipe, TitleCasePipe],
 })
 export class SubscriptionCardComponent {
   private toastController = inject(ToastController);
@@ -29,6 +29,7 @@ export class SubscriptionCardComponent {
 
   constructor() {
     addIcons({ card, notifications, warning });
+
 
  }
 

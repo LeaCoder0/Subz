@@ -1,5 +1,10 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="primary" routerLink="/books">
+        <ion-icon slot="icon-only" md="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title>
       {{ 'TABS.SETTINGS.SETTINGS' | translate }}
     </ion-title>

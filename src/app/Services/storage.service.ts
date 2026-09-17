@@ -4,11 +4,15 @@ import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { Share } from '@capacitor/share';
 import { ISubscription } from '../tab-overview/Interfaces/subscriptionInterface';
+import { IBook } from '../books/Interfaces/bookInterface';
 import { ISettings } from '../tab-settings/Interfaces/settingsInterface';
 import { ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
 const BACKUP_FILE_NAME = 'subz-backup.json';
+
+/** Name given to the book that pre-books data is migrated into. */
+const DEFAULT_BOOK_NAME_PREFIX = 'Book No. ';
 
 @Injectable({
   providedIn: 'root'
@@ -17,18 +21,42 @@ export class StorageService {
   private toastController = inject(ToastController);
   private translateService = inject(TranslateService);
 
+  /**
+   * The in-flight (or completed) migration. Cached as a promise rather than a
+   * boolean because several callers race at startup -- BooksPage and
+   * NotificationService both read subscriptions immediately -- and a boolean
+   * flag lets the second caller read before the first has finished writing.
+   */
+  private migration?: Promise<void>;
+
   defaultSettings: ISettings = {
     hideOverviewHelperTextGeneral: false,
     hideOverviewHelperTextMenuBar: false
   }
 
-  async retrieveSubscriptionsFromStorage(): Promise<ISubscription[]> {
+  /**
+   * All subscriptions, or only one book's when `bookId` is given.
+   * NotificationService deliberately calls this without a bookId, because
+   * reminders are device-level and should not depend on the open book.
+   */
+  async retrieveSubscriptionsFromStorage(bookId?: number): Promise<ISubscription[]> {
+    await this.migrateToBooks();
+
     const entries = await Preferences.get({ key: 'subscriptions' });
-    if (entries.value) {
-      return JSON.parse(entries.value);
-    } else {
-      return [];
-    }
+    const all: ISubscription[] = entries.value ? JSON.parse(entries.value) : [];
+
+    return bookId === undefined ? all : all.filter(entry => entry.bookId === bookId);
+  }
+
+  /**
+   * Persists one book's subscriptions without disturbing the other books'.
+   * The overview only ever holds the entries of the book it is showing.
+   */
+  async saveBookSubscriptionsToStorage(bookId: number, entries: ISubscription[]) {
+    const all = await this.retrieveSubscriptionsFromStorage();
+    const others = all.filter(entry => entry.bookId !== bookId);
+
+    await this.saveSubscriptionsToStorage(others.concat(entries.map(entry => ({ ...entry, bookId }))));
   }
 
   async saveSubscriptionsToStorage(entries: ISubscription[]) {
@@ -54,11 +82,127 @@ export class StorageService {
     });
   }
 
+  // ---------------------------------------------------------------- books ----
+
+  async retrieveBooksFromStorage(): Promise<IBook[]> {
+    await this.migrateToBooks();
+
+    const books = await Preferences.get({ key: 'books' });
+    const parsed: IBook[] = books.value ? JSON.parse(books.value) : [];
+
+    return parsed.sort((a, b) => a.order - b.order);
+  }
+
+  async saveBooksToStorage(books: IBook[]) {
+    await Preferences.set({ key: 'books', value: JSON.stringify(books) });
+  }
+
+  /**
+   * Default name is one past the highest `Book No. N` already used, rather than
+   * `count + 1`, so deleting a book in the middle cannot produce a duplicate name.
+   */
+  async createBook(name?: string): Promise<IBook> {
+    const books = await this.retrieveBooksFromStorage();
+    const now = Date.now();
+
+    const book: IBook = {
+      id: this.generateId(books.map(existing => existing.id)),
+      name: name?.trim() || this.nextDefaultBookName(books),
+      order: books.length,
+      created: now,
+      lastEdited: now,
+    };
+
+    await this.saveBooksToStorage(books.concat(book));
+    return book;
+  }
+
+  async renameBook(bookId: number, name: string) {
+    const books = await this.retrieveBooksFromStorage();
+    const book = books.find(candidate => candidate.id === bookId);
+
+    if (!book || !name.trim()) { return; }
+
+    book.name = name.trim();
+    book.lastEdited = Date.now();
+    await this.saveBooksToStorage(books);
+  }
+
+  /** Deleting a book takes its subscriptions with it. */
+  async deleteBook(bookId: number) {
+    const books = (await this.retrieveBooksFromStorage()).filter(book => book.id !== bookId);
+    books.forEach((book, index) => book.order = index);
+    await this.saveBooksToStorage(books);
+
+    const remaining = (await this.retrieveSubscriptionsFromStorage()).filter(entry => entry.bookId !== bookId);
+    await this.saveSubscriptionsToStorage(remaining);
+  }
+
+  /** Persists the given order; the array's position becomes each book's `order`. */
+  async reorderBooks(books: IBook[]) {
+    books.forEach((book, index) => book.order = index);
+    await this.saveBooksToStorage(books);
+  }
+
+  private nextDefaultBookName(books: IBook[]): string {
+    const used = books
+      .map(book => new RegExp(`^${DEFAULT_BOOK_NAME_PREFIX}(\\d+)$`).exec(book.name))
+      .filter(match => match !== null)
+      .map(match => Number(match[1]));
+
+    return DEFAULT_BOOK_NAME_PREFIX + (used.length ? Math.max(...used) + 1 : 1);
+  }
+
+  /** Same scheme as the overview uses for subscription ids. */
+  private generateId(taken: number[]): number {
+    let id: number;
+    do { id = Math.floor((Math.random() * 999999999999) + 1); } while (taken.includes(id));
+    return id;
+  }
+
+  /**
+   * Moves pre-books data into a single default book. Guarded on the `books` key,
+   * so it runs once and every later call is a no-op.
+   */
+  private migrateToBooks(): Promise<void> {
+    this.migration ??= this.runBooksMigration();
+    return this.migration;
+  }
+
+  private async runBooksMigration(): Promise<void> {
+    const existing = await Preferences.get({ key: 'books' });
+    if (existing.value) { return; }
+
+    const now = Date.now();
+    const book: IBook = {
+      id: this.generateId([]),
+      name: DEFAULT_BOOK_NAME_PREFIX + '1',
+      order: 0,
+      created: now,
+      lastEdited: now,
+    };
+    await this.saveBooksToStorage([book]);
+
+    const entries = await Preferences.get({ key: 'subscriptions' });
+    const all: ISubscription[] = entries.value ? JSON.parse(entries.value) : [];
+
+    await this.saveSubscriptionsToStorage(
+      all.map(entry => entry.bookId === undefined ? { ...entry, bookId: book.id } : entry));
+  }
+
+  // ------------------------------------------------------------- backups ----
+
+  /**
+   * Backup format v2: every book in one file. A v1 backup (no `books` key, as
+   * written by the upstream F-Droid app) is still accepted on restore.
+   */
   async getAllData(): Promise<string> {
+    const books = await this.retrieveBooksFromStorage();
     const entries = await this.retrieveSubscriptionsFromStorage();
     const set = await this.retrieveSettingsFromStorage();
 
     const backup = {
+      books,
       subscriptions: entries,
       settings: set
     };
@@ -143,12 +287,23 @@ export class StorageService {
    * subscription if lastEdited property is present, else keeps the backup subscription
    */
   async restoreAllData(backup: string, mergeWithCurrent?: boolean) {
-    let backupObject: { subscriptions: ISubscription[], settings: ISettings };
+    let backupObject: { books?: IBook[], subscriptions: ISubscription[], settings: ISettings };
     try {
       backupObject = JSON.parse(backup);
 
       if (!backupObject.hasOwnProperty('subscriptions') && !backupObject.hasOwnProperty('settings')) {
         throw Error;
+      }
+
+      // BOOKS
+      let books: IBook[] = backupObject.books ?? [];
+      const importedBookIds = new Set<number>();
+
+      for (const book of books) {
+        const isValid = 'id' in book && typeof book.id === 'number' &&
+                        'name' in book && typeof book.name === 'string' &&
+                        'order' in book && typeof book.order === 'number';
+        if (!isValid) { throw Error; }
       }
 
       // SUBSCRIPTIONS
@@ -205,6 +360,41 @@ export class StorageService {
       if ('hideOverviewHelperTextMenuBar' in settings) {
         this.throwErrorHelper(typeof settings.hideOverviewHelperTextMenuBar !== 'boolean'); }
 
+      // A v1 backup carries no books, so everything it holds becomes one book.
+      // Its name follows the same rule as a manually created book, which keeps
+      // it distinct from any book already present when merging.
+      if (books.length === 0) {
+        const existingBooks = mergeWithCurrent ? await this.retrieveBooksFromStorage() : [];
+        const now = Date.now();
+        const importedBook: IBook = {
+          id: this.generateId(existingBooks.map(book => book.id)),
+          name: this.nextDefaultBookName(existingBooks),
+          order: existingBooks.length,
+          created: now,
+          lastEdited: now,
+        };
+        books = existingBooks.concat(importedBook);
+        importedBookIds.add(importedBook.id);
+
+        // When merging, an entry the app already has keeps the book it is in --
+        // importing a backup should not silently relocate existing entries and
+        // leave their original book empty. Only genuinely new entries land in
+        // the imported book.
+        const currentBookIdByEntryId = new Map<number, number>(
+          (mergeWithCurrent ? await this.retrieveSubscriptionsFromStorage() : [])
+            .map(current => [current.id, current.bookId]));
+
+        subscriptions = subscriptions.map(sub => ({
+          ...sub,
+          bookId: currentBookIdByEntryId.get(sub.id) ?? importedBook.id,
+        }));
+      } else if (mergeWithCurrent) {
+        const currentBooks = await this.retrieveBooksFromStorage();
+        const restoredIds = new Set(books.map(book => book.id));
+        books = books.concat(currentBooks.filter(book => !restoredIds.has(book.id)));
+        books.forEach((book, index) => book.order = index);
+      }
+
       // Merge current subscriptions with backup based on id
       if (mergeWithCurrent) {
         const currentSubscriptions = await this.retrieveSubscriptionsFromStorage();
@@ -248,8 +438,14 @@ export class StorageService {
         }
       }
 
-      this.saveSubscriptionsToStorage(subscriptions);
-      this.saveSettingsToStorage(settings);
+      // An imported book that nothing landed in would just be clutter
+      const usedBookIds = new Set(subscriptions.map(sub => sub.bookId));
+      books = books.filter(book => usedBookIds.has(book.id) || !importedBookIds.has(book.id));
+      books.forEach((book, index) => book.order = index);
+
+      await this.saveBooksToStorage(books);
+      await this.saveSubscriptionsToStorage(subscriptions);
+      await this.saveSettingsToStorage(settings);
 
       this.translateService.get('TABS.SETTINGS.RESTORE_BACKUP_SUCCESS').subscribe(RESTORE_BACKUP_SUCCESS => {
         this.toastMessage(RESTORE_BACKUP_SUCCESS);
