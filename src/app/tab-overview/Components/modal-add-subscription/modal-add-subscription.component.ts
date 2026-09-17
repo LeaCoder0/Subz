@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, Input, OnInit, ViewChild, inject } from '@angular/core';
+import { contrastHexFor, isPresetColor } from '../../subscription-color';
 import { addIcons } from 'ionicons';
 import { arrowBack, save } from 'ionicons/icons';
 import { DatePipe, LowerCasePipe, UpperCasePipe } from '@angular/common';
@@ -34,8 +35,45 @@ export class ModalAddSubscriptionComponent implements OnInit {
   colors = subscriptionColors;
   retrievedSettings: ISettings;
   dateFormatList = dateFormats;
+  /** Sentinel for the select; never stored on a subscription. */
+  readonly CUSTOM_COLOR = 'CUSTOM';
+
+  /** Seeds the native picker when the entry has no custom colour yet. */
+  private static readonly DEFAULT_CUSTOM_COLOR = '#3880ff';
+
   currentYear = new Date().getFullYear();
   maxDate = `${new Date().getFullYear() + 5}-12-31`;
+
+  get isPresetSelected(): boolean {
+    return isPresetColor(this.subscriptionForm.value.color);
+  }
+
+  /** What the select shows: a preset name, or the Custom sentinel. */
+  get selectedColorOption(): string {
+    return this.isPresetSelected ? this.subscriptionForm.value.color : this.CUSTOM_COLOR;
+  }
+
+  /** The native picker only understands #rrggbb, so fall back for anything else. */
+  get customColorValue(): string {
+    const color = this.subscriptionForm.value.color;
+    return /^#[0-9a-f]{6}$/i.test(color) ? color : ModalAddSubscriptionComponent.DEFAULT_CUSTOM_COLOR;
+  }
+
+  get previewContrastHex(): string {
+    return contrastHexFor(this.subscriptionForm.value.color);
+  }
+
+  onColorOptionChange(option: string) {
+    // Switching to Custom seeds a colour so the tile has something to show
+    // straight away; picking a preset writes the preset name through unchanged.
+    this.subscriptionForm.patchValue({
+      color: option === this.CUSTOM_COLOR ? this.customColorValue : option,
+    });
+  }
+
+  onCustomColorPicked(color: string) {
+    this.subscriptionForm.patchValue({ color });
+  }
 
   /** The user's stored format, translated into Angular DatePipe tokens. */
   get displayDateFormat(): string {

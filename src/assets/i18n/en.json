@@ -59,7 +59,8 @@
         "GREEN": "Green",
         "YELLOW": "Yellow",
         "RED": "Red",
-        "GREY": "Grey"
+        "GREY": "Grey",
+        "CUSTOM": "Custom…"
       },
       "MONTH_NAMES": {
         "JANUARY": "January",

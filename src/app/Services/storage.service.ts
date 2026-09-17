@@ -315,7 +315,7 @@ export class StorageService {
         isValid = 'id' in subscription && typeof subscription.id === 'number' &&
                   'name' in subscription && typeof subscription.name === 'string' &&
                   'cost' in subscription && typeof subscription.cost === 'number' &&
-                  'color' in subscription && typeof subscription.color === 'string' &&
+                  'color' in subscription && typeof subscription.color === 'string' && subscription.color.length > 0 &&
                   'billingStart' in subscription && typeof subscription.billingStart === 'string' &&
                   'billingEvery' in subscription && typeof subscription.billingEvery === 'number' &&
                   'billingInterval' in subscription && typeof subscription.billingInterval === 'string' &&

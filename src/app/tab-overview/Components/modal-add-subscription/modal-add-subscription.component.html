@@ -42,13 +42,30 @@
         <ion-input style="text-align: end" type="number" name="cost" value="3" formControlName="cost"></ion-input>
       </ion-item>
 
-      <ion-item [color]="subscriptionForm.value.color | lowercase">
+      <ion-item
+        [color]="isPresetSelected ? (subscriptionForm.value.color | lowercase) : null"
+        [style.--background]="isPresetSelected ? null : subscriptionForm.value.color"
+        [style.--color]="isPresetSelected ? null : previewContrastHex">
         <ion-label>{{ 'TABS.OVERVIEW.TILE_COLOR' | translate }}</ion-label>
-        <ion-select cancelText="{{ 'GENERAL.CANCEL' | translate }}" okText="{{ 'GENERAL.OK' | translate }}" name="color" formControlName="color">
+        <ion-select cancelText="{{ 'GENERAL.CANCEL' | translate }}" okText="{{ 'GENERAL.OK' | translate }}" name="color" [value]="selectedColorOption" (ionChange)="onColorOptionChange($any($event).detail.value)">
           @for (color of colors; track color) {
             <ion-select-option [value]="color">{{ 'TABS.OVERVIEW.COLORS.'+color | uppercase | translate }}</ion-select-option>
           }
+          <ion-select-option [value]="CUSTOM_COLOR">{{ 'TABS.OVERVIEW.COLORS.CUSTOM' | translate }}</ion-select-option>
         </ion-select>
+
+        @if (!isPresetSelected) {
+          <!-- native input so the WebView shows the OS colour picker -->
+          <input
+            slot="end"
+            class="color-swatch"
+            type="color"
+            [value]="customColorValue"
+            [style.background-color]="customColorValue"
+            [style.border-color]="previewContrastHex"
+            (input)="onCustomColorPicked($any($event.target).value)"
+            [attr.aria-label]="'TABS.OVERVIEW.COLORS.CUSTOM' | translate" />
+        }
       </ion-item>
 
       <ion-list-header class="list-header" style="margin-top: 1rem;">

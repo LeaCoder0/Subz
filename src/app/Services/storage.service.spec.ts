@@ -236,6 +236,31 @@ describe('StorageService books', () => {
       expect(await service.retrieveBooksFromStorage()).toHaveLength(1);
     });
 
+    it('round-trips a custom hex colour', async () => {
+      const book = (await service.retrieveBooksFromStorage())[0];
+      await service.saveBookSubscriptionsToStorage(book.id, [
+        makeSubscription({ id: 1, name: 'Netflix', color: '#8a2be2' }),
+      ]);
+
+      const backup = await service.getAllData();
+      store.clear();
+      await service.restoreAllData(backup);
+
+      expect((await service.retrieveSubscriptionsFromStorage())[0].color).toBe('#8a2be2');
+    });
+
+    it('rejects a backup whose entry has an empty colour', async () => {
+      const broken = JSON.stringify({
+        subscriptions: [makeSubscription({ id: 1, color: '' })],
+        settings: {},
+      });
+
+      await service.restoreAllData(broken);
+
+      // nothing imported; the default book stays empty
+      expect(await service.retrieveSubscriptionsFromStorage()).toHaveLength(0);
+    });
+
     it('round-trips a v2 backup', async () => {
       const bookOne = (await service.retrieveBooksFromStorage())[0];
       const bookTwo = await service.createBook('Household');

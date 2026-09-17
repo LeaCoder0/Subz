@@ -1,4 +1,5 @@
 import { Component, Input, inject } from '@angular/core';
+import { contrastHexFor, isPresetColor } from '../../subscription-color';
 import { addIcons } from 'ionicons';
 import { card, notifications, warning } from 'ionicons/icons';
 import { DatePipe, DecimalPipe, LowerCasePipe, SlicePipe, TitleCasePipe } from '@angular/common';
@@ -17,6 +18,16 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
   imports: [IonCard, IonCardContent, IonChip, IonCol, IonGrid, IonIcon, IonLabel, IonRow, TranslatePipe, NextBillingPipe, NextCancelationPeriodDeadlinePipe, NotificationTimeForNextCancelationPeriodDeadlinePipe, CostByBillingIntervalPipe, DecimalPipe, LowerCasePipe, SlicePipe, TitleCasePipe],
 })
 export class SubscriptionCardComponent {
+  /** Presets go through Ionic's theme colours; anything else is styled inline. */
+  get isPreset(): boolean {
+    return isPresetColor(this.subscription.color);
+  }
+
+  /** Readable text colour for a custom tile; presets keep Ionic's own pairing. */
+  get contrastHex(): string {
+    return contrastHexFor(this.subscription.color);
+  }
+
   private toastController = inject(ToastController);
   private nextBillingPipe = inject(NextBillingPipe);
   private nextCancelationPeriodDeadlinePipe = inject(NextCancelationPeriodDeadlinePipe);
