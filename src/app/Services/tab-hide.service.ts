@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { filter } from 'rxjs/operators';
+import { filter } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
 
@@ -22,7 +22,7 @@ export class TabHideService {
   }
 
   private subscribeToPageChanges() {
-    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e: NavigationEnd) => {
+    this.router.events.pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd)).subscribe(e => {
       this.showOrHideTabs(e);
     });
   }

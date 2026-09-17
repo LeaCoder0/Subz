@@ -5,7 +5,7 @@
         {{ 'TABS.OVERVIEW.OVERVIEW' | translate }}
       </ng-container>
       <ng-container *ngIf="subscriptions.length !== 0">
-        {{ subscriptions | searchSubscriptions:subscriptionSearchFilter | totalCostByBillingInterval:selectedBillingInterval | number : '1.2-2' : translateService.currentLang }} {{ settings?.currency || '€' }} / {{ 'TABS.OVERVIEW.CALENDAR_INTERVALS.'+selectedBillingInterval | translate | titlecase | slice:0:1 }}
+        {{ subscriptions | searchSubscriptions:subscriptionSearchFilter | totalCostByBillingInterval:selectedBillingInterval | number : '1.2-2' : translateService.currentLang() }} {{ settings?.currency || '€' }} / {{ 'TABS.OVERVIEW.CALENDAR_INTERVALS.'+selectedBillingInterval | translate | titlecase | slice:0:1 }}
       </ng-container>
     </ion-title>
     <ion-buttons slot="end">

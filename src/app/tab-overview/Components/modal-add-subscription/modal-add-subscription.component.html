@@ -52,10 +52,21 @@
         {{ 'TABS.OVERVIEW.BILLING' | translate }}
       </ion-list-header>
 
-      <ion-item>
+      <ion-item button="true" id="billing-start-trigger">
         <ion-label>{{ 'TABS.OVERVIEW.BILLING_START' | translate }}</ion-label>
-        <ion-datetime cancelText="{{ 'GENERAL.CANCEL' | translate }}" doneText="{{ 'GENERAL.DONE' | translate }}" displayFormat="{{ retrievedSettings?.dateFormat || dateFormatList[0] }}" max="{{ currentYear + 5 }}" name="billingStart" formControlName="billingStart" monthNames="{{ monthNames }}"></ion-datetime>
+        <ion-note slot="end">{{ subscriptionForm.get('billingStart').value | date: displayDateFormat }}</ion-note>
       </ion-item>
+      <ion-modal trigger="billing-start-trigger" [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime
+            presentation="date"
+            formControlName="billingStart"
+            [max]="maxDate"
+            [showDefaultButtons]="true"
+            [cancelText]="'GENERAL.CANCEL' | translate"
+            [doneText]="'GENERAL.DONE' | translate"></ion-datetime>
+        </ng-template>
+      </ion-modal>
 
       <ion-grid class="ion-no-padding">
         <ion-row class="ion-no-padding">
@@ -85,10 +96,21 @@
         {{ 'TABS.OVERVIEW.CONTRACT' | translate }}
       </ion-list-header>
 
-      <ion-item>
+      <ion-item button="true" id="contract-start-trigger">
         <ion-label>{{ 'TABS.OVERVIEW.CONTRACT_START' | translate }}</ion-label>
-        <ion-datetime cancelText="{{ 'GENERAL.CANCEL' | translate }}" doneText="{{ 'GENERAL.DONE' | translate }}" displayFormat="{{ retrievedSettings?.dateFormat || dateFormatList[0] }}" max="{{ currentYear + 5 }}" name="contractStart" formControlName="contractStart" monthNames="{{ monthNames }}"></ion-datetime>
+        <ion-note slot="end">{{ subscriptionForm.get('contractStart').value | date: displayDateFormat }}</ion-note>
       </ion-item>
+      <ion-modal trigger="contract-start-trigger" [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime
+            presentation="date"
+            formControlName="contractStart"
+            [max]="maxDate"
+            [showDefaultButtons]="true"
+            [cancelText]="'GENERAL.CANCEL' | translate"
+            [doneText]="'GENERAL.DONE' | translate"></ion-datetime>
+        </ng-template>
+      </ion-modal>
 
       <ion-grid class="ion-no-padding">
         <ion-row class="ion-no-padding">

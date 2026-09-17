@@ -1,13 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, Platform } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
-import { StorageService } from 'src/app/Services/storage.service';
-import { ThemeService } from 'src/app/Services/theme.service';
+import { addIcons } from 'ionicons';
+import { archive, arrowBack, refresh } from 'ionicons/icons';
+import { RouterLink } from '@angular/router';
+import { AlertController, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonTitle, IonToolbar, Platform } from '@ionic/angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { StorageService } from '../../Services/storage.service';
+import { ThemeService } from '../../Services/theme.service';
 
 @Component({
   selector: 'app-data-management',
   templateUrl: './data-management.page.html',
   styleUrls: ['./data-management.page.scss'],
+  imports: [IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonTitle, IonToolbar, RouterLink, TranslatePipe],
 })
 export class DataManagementPage implements OnInit {
 
@@ -17,7 +21,9 @@ export class DataManagementPage implements OnInit {
     public themeService: ThemeService,
     public translateService: TranslateService,
     private platform: Platform,
-  ) { }
+  ) {
+    addIcons({ archive, arrowBack, refresh });
+ }
 
   ngOnInit() {
   }

@@ -58,6 +58,7 @@ export class NextCancelationPeriodDeadlinePipe implements PipeTransform {
     function calculate(a: number, operator: string, b: number): number {
       if (operator === '+') { return a + b; }
       else if (operator === '-') { return a - b; }
+      throw new Error(`Unsupported operator: ${operator}`);
     }
 
     switch (intervalType) {

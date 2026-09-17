@@ -1,10 +1,18 @@
 import { Component, ViewChild } from '@angular/core';
-import { ModalController, AlertController, IonSearchbar } from '@ionic/angular';
+import { DecimalPipe, NgFor, NgIf, SlicePipe, TitleCasePipe } from '@angular/common';
+import { SubscriptionCardComponent } from './Components/subscription-card/subscription-card.component';
+import { SearchSubscriptionsPipe } from './Pipes/search-subscriptions.pipe';
+import { SortSubscriptionsPipe } from './Pipes/sort-subscriptions.pipe';
+import { TotalCostByBillingIntervalPipe } from './Pipes/total-cost-by-billing-interval.pipe';
+import { addIcons } from 'ionicons';
+import { closeOutline } from 'ionicons/icons';
+import { FormsModule } from '@angular/forms';
+import { AlertController, IonButton, IonButtons, IonCard, IonCardContent, IonCol, IonContent, IonFabButton, IonGrid, IonHeader, IonIcon, IonItem, IonLabel, IonRow, IonSearchbar, IonTitle, IonToolbar, ModalController } from '@ionic/angular';
 import { ModalAddSubscriptionComponent } from './Components/modal-add-subscription/modal-add-subscription.component';
 import { ISubscription } from './Interfaces/subscriptionInterface';
 import { ISettings } from '../tab-settings/Interfaces/settingsInterface';
 import { StorageService } from '../Services/storage.service';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { billingIntervals } from './BILLING_INTERVALS';
 import { NotificationService } from '../Services/notification.service';
 import { SplashScreen } from '@capacitor/splash-screen';
@@ -12,7 +20,8 @@ import { SplashScreen } from '@capacitor/splash-screen';
 @Component({
   selector: 'app-tab-overview',
   templateUrl: 'tab-overview.page.html',
-  styleUrls: ['tab-overview.page.scss']
+  styleUrls: ['tab-overview.page.scss'],
+  imports: [IonButton, IonButtons, IonCard, IonCardContent, IonCol, IonContent, IonFabButton, IonGrid, IonHeader, IonIcon, IonItem, IonLabel, IonRow, IonSearchbar, IonTitle, IonToolbar, FormsModule, TranslatePipe, SearchSubscriptionsPipe, SortSubscriptionsPipe, TotalCostByBillingIntervalPipe, SubscriptionCardComponent, DecimalPipe, NgFor, NgIf, SlicePipe, TitleCasePipe],
 })
 export class TabOverviewPage {
   @ViewChild('searchSubscriptions', { static: false }) searchSubscriptions: IonSearchbar;
@@ -31,7 +40,9 @@ export class TabOverviewPage {
     public modalController: ModalController,
     public storageService: StorageService,
     public translateService: TranslateService,
-    public notificationService: NotificationService) {}
+    public notificationService: NotificationService) {
+    addIcons({ closeOutline });
+}
 
   // Gets fired every page view so that settings which were made during runtime, etc. are immediately there
   ionViewWillEnter() {

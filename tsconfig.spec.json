@@ -2,14 +2,14 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "./out-tsc/app",
-    "types": []
+    "outDir": "./out-tsc/spec",
+    "types": [
+      "vitest/globals"
+    ]
   },
-  "files": [
-    "src/main.ts",
-    "src/zone-flags.ts"
-  ],
   "include": [
-    "src/**/*.d.ts"
+    "src/**/*.spec.ts",
+    "src/**/*.d.ts",
+    "src/test-setup.ts"
   ]
 }

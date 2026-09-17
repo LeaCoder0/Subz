@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Storage } from '@capacitor/storage';
+import { Preferences } from '@capacitor/preferences';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { ISubscription } from '../tab-overview/Interfaces/subscriptionInterface';
 import { ISettings } from '../tab-settings/Interfaces/settingsInterface';
@@ -20,7 +20,7 @@ export class StorageService {
     private translateService: TranslateService) { }
 
   async retrieveSubscriptionsFromStorage(): Promise<ISubscription[]> {
-    const entries = await Storage.get({ key: 'subscriptions' });
+    const entries = await Preferences.get({ key: 'subscriptions' });
     if (entries.value) {
       return JSON.parse(entries.value);
     } else {
@@ -29,14 +29,14 @@ export class StorageService {
   }
 
   async saveSubscriptionsToStorage(entries: ISubscription[]) {
-    await Storage.set({
+    await Preferences.set({
       key: 'subscriptions',
       value: JSON.stringify(entries)
     });
   }
 
   async retrieveSettingsFromStorage(): Promise<ISettings> {
-    const settingsString = await Storage.get({ key: 'settings' });
+    const settingsString = await Preferences.get({ key: 'settings' });
     if (settingsString.value) {
       return JSON.parse(settingsString.value);
     } else {
@@ -45,7 +45,7 @@ export class StorageService {
   }
 
   async saveSettingsToStorage(settings: ISettings) {
-    await Storage.set({
+    await Preferences.set({
       key: 'settings',
       value: JSON.stringify(settings)
     });
@@ -91,8 +91,11 @@ export class StorageService {
         path: 'subz-backup.json',
         directory: Directory.Documents,
         encoding: Encoding.UTF8
-      }).then((fileReadResult) => {
-        this.restoreAllData(fileReadResult.data, mergeWithCurrent);
+      }).then(async (fileReadResult) => {
+        const data = typeof fileReadResult.data === 'string'
+          ? fileReadResult.data
+          : await fileReadResult.data.text();
+        this.restoreAllData(data, mergeWithCurrent);
       });
 
       this.translateService.get('TABS.SETTINGS.RESTORE_BACKUP_SUCCESS').subscribe(RESTORE_BACKUP_SUCCESS => {

@@ -1,8 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { NgFor } from '@angular/common';
+import { addIcons } from 'ionicons';
+import { arrowBack, calendar, cash } from 'ionicons/icons';
+import { TranslatePipe } from '@ngx-translate/core';
+import { RouterLink } from '@angular/router';
+import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonTitle, IonToolbar } from '@ionic/angular';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { StorageService } from 'src/app/Services/storage.service';
-import { ThemeService } from 'src/app/Services/theme.service';
+import { StorageService } from '../../Services/storage.service';
+import { ThemeService } from '../../Services/theme.service';
 import { ISettings } from '../Interfaces/settingsInterface';
 import { currencies } from './CURRENCIES';
 import { dateFormats } from './DATE_FORMATS';
@@ -11,6 +17,7 @@ import { dateFormats } from './DATE_FORMATS';
   selector: 'app-region',
   templateUrl: './region.page.html',
   styleUrls: ['./region.page.scss'],
+  imports: [IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonTitle, IonToolbar, ReactiveFormsModule, RouterLink, TranslatePipe, NgFor],
 })
 export class RegionPage implements OnInit {
   settingsForm: FormGroup;
@@ -23,6 +30,8 @@ export class RegionPage implements OnInit {
     private formBuilder: FormBuilder,
     private storageService: StorageService,
     public themeService: ThemeService) {
+    addIcons({ arrowBack, calendar, cash });
+
     this.settingsForm = this.formBuilder.group({
       currency: this.currencyList[0],
       dateFormat: this.dateFormatList[0],

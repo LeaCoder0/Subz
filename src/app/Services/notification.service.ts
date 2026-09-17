@@ -53,10 +53,10 @@ export class NotificationService {
           // Instants are safe because this service is called in app.component after i18n initialization
           const NOTIFICATION_TITLE = this.translateService.instant('NOTIFICATIONS.NOTIFICATION_TITLE')
             .replace('$NAME$', subscription.name)
-            .replace('$DATE$', formatDate(nextCancelationPeriodDeadlineDate, 'mediumDate', this.translateService.currentLang));
+            .replace('$DATE$', formatDate(nextCancelationPeriodDeadlineDate, 'mediumDate', this.translateService.currentLang()));
           const NOTIFICATION_BODY = this.translateService.instant('NOTIFICATIONS.NOTIFICATION_BODY')
             .replace('$NAME$', subscription.name)
-            .replace('$DATE$', formatDate(nextCancelationPeriodDeadlineDate, 'mediumDate', this.translateService.currentLang));
+            .replace('$DATE$', formatDate(nextCancelationPeriodDeadlineDate, 'mediumDate', this.translateService.currentLang()));
 
           const notification: LocalNotificationSchema = {
             id: Number(subscription.id),

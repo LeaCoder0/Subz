@@ -1,18 +1,20 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { ModalController, AlertController, IonInput } from '@ionic/angular';
-import { Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { DatePipe, LowerCasePipe, NgFor, NgIf, UpperCasePipe } from '@angular/common';
+import { AlertController, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonNote, IonRow, IonSelect, IonSelectOption, IonTitle, IonToolbar, ModalController } from '@ionic/angular';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ISettings } from '../../../tab-settings/Interfaces/settingsInterface';
 import { ISubscription } from '../../Interfaces/subscriptionInterface';
-import { StorageService } from 'src/app/Services/storage.service';
-import { TranslateService } from '@ngx-translate/core';
+import { StorageService } from '../../../Services/storage.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { billingIntervals } from '../../BILLING_INTERVALS';
 import { subscriptionColors } from '../../SUBSCRIPTION_COLORS';
-import { dateFormats } from '../../../tab-settings/region/DATE_FORMATS';
+import { angularDateFormats, dateFormats } from '../../../tab-settings/region/DATE_FORMATS';
 
 @Component({
   selector: 'app-modal-add-subscription',
   templateUrl: './modal-add-subscription.component.html',
   styleUrls: ['./modal-add-subscription.component.scss'],
+  imports: [IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonNote, IonRow, IonSelect, IonSelectOption, IonTitle, IonToolbar, ReactiveFormsModule, TranslatePipe, DatePipe, LowerCasePipe, NgFor, NgIf, UpperCasePipe],
 })
 export class ModalAddSubscriptionComponent implements OnInit {
   @Input() existingSubscription?: ISubscription; // If passed, the component is used for updating an existing subscription
@@ -22,9 +24,14 @@ export class ModalAddSubscriptionComponent implements OnInit {
   availableBillingIntervals = billingIntervals;
   colors = subscriptionColors;
   retrievedSettings: ISettings;
-  monthNames: string[] = [this.translateService.instant('TABS.OVERVIEW.MONTH_NAMES.JANUARY'), this.translateService.instant('TABS.OVERVIEW.MONTH_NAMES.FEBRUARY'), this.translateService.instant('TABS.OVERVIEW.MONTH_NAMES.MARCH'), this.translateService.instant('TABS.OVERVIEW.MONTH_NAMES.APRIL'), this.translateService.instant('TABS.OVERVIEW.MONTH_NAMES.MAI'), this.translateService.instant('TABS.OVERVIEW.MONTH_NAMES.JUNE'), this.translateService.instant('TABS.OVERVIEW.MONTH_NAMES.JULY'), this.translateService.instant('TABS.OVERVIEW.MONTH_NAMES.AUGUST'), this.translateService.instant('TABS.OVERVIEW.MONTH_NAMES.SEPTEMBER'), this.translateService.instant('TABS.OVERVIEW.MONTH_NAMES.OCTOBER'), this.translateService.instant('TABS.OVERVIEW.MONTH_NAMES.NOVEMBER'), this.translateService.instant('TABS.OVERVIEW.MONTH_NAMES.DECEMBER')];
   dateFormatList = dateFormats;
   currentYear = new Date().getFullYear();
+  maxDate = `${new Date().getFullYear() + 5}-12-31`;
+
+  /** The user's stored format, translated into Angular DatePipe tokens. */
+  get displayDateFormat(): string {
+    return angularDateFormats[this.retrievedSettings?.dateFormat] ?? angularDateFormats[dateFormats[0]];
+  }
 
   constructor(
     public alertController: AlertController,

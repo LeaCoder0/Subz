@@ -1,15 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { addIcons } from 'ionicons';
+import { arrowBack, calendar, helpBuoy, moon } from 'ionicons/icons';
+import { TranslatePipe } from '@ngx-translate/core';
+import { IonButton, IonButtons, IonCheckbox, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonNote, IonTitle, IonToolbar } from '@ionic/angular';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { StorageService } from 'src/app/Services/storage.service';
-import { ThemeService } from 'src/app/Services/theme.service';
+import { StorageService } from '../../Services/storage.service';
+import { ThemeService } from '../../Services/theme.service';
 import { ISettings } from '../Interfaces/settingsInterface';
 
 @Component({
   selector: 'app-ui',
   templateUrl: './ui.page.html',
   styleUrls: ['./ui.page.scss'],
+  imports: [IonButton, IonButtons, IonCheckbox, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonNote, IonTitle, IonToolbar, ReactiveFormsModule, RouterLink, TranslatePipe],
 })
 export class UiPage implements OnInit {
   settingsForm: FormGroup;
@@ -22,6 +27,8 @@ export class UiPage implements OnInit {
     public themeService: ThemeService,
     private router: Router
   ) {
+    addIcons({ arrowBack, calendar, helpBuoy, moon });
+
     this.settingsForm = this.formBuilder.group({
       forceDarkMode: false,
       notificationBeforeCancelationPeriodInDays: null

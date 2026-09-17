@@ -1,34 +1,57 @@
-import { Component } from '@angular/core';
-
-import { Platform } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
-
+import { Component, inject } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
+
+import { IonApp, IonRouterOutlet, Platform } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { App } from '@capacitor/app';
+
 import localeDe from '@angular/common/locales/de';
+import localeEl from '@angular/common/locales/el';
 import localeFr from '@angular/common/locales/fr';
 import localeIt from '@angular/common/locales/it';
 import localeNb from '@angular/common/locales/nb';
 import localeRu from '@angular/common/locales/ru';
+import localeSv from '@angular/common/locales/sv';
+import localeTa from '@angular/common/locales/ta';
+import localeZh from '@angular/common/locales/zh-Hans';
 import { TabHideService } from './Services/tab-hide.service';
 import { Router } from '@angular/router';
 import { ThemeService } from './Services/theme.service';
 import { NotificationService } from './Services/notification.service';
 import { Observable } from 'rxjs';
 
+/**
+ * Locale data and the translation file each browser language maps to. `nb` and
+ * `zh` differ from their translation-file names, which is why this is a table
+ * rather than a straight passthrough.
+ */
+const LOCALES: Record<string, { data: unknown; lang: string }> = {
+  de: { data: localeDe, lang: 'de' },
+  el: { data: localeEl, lang: 'el' },
+  fr: { data: localeFr, lang: 'fr' },
+  it: { data: localeIt, lang: 'it' },
+  nb: { data: localeNb, lang: 'nb_NO' },
+  ru: { data: localeRu, lang: 'ru' },
+  sv: { data: localeSv, lang: 'sv' },
+  ta: { data: localeTa, lang: 'ta' },
+  zh: { data: localeZh, lang: 'zh_Hans' },
+};
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
-  styleUrls: ['app.component.scss']
+  styleUrls: ['app.component.scss'],
+  imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-  constructor(
-    private platform: Platform,
-    private translateService: TranslateService,
-    public tabHideService: TabHideService,
-    private router: Router,
-    public notificationService: NotificationService,
-    public themeService: ThemeService,
-  ) { this.initializeApp(); }
+  private platform = inject(Platform);
+  private translateService = inject(TranslateService);
+  private router = inject(Router);
+  tabHideService = inject(TabHideService);
+  notificationService = inject(NotificationService);
+  themeService = inject(ThemeService);
+
+  constructor() { this.initializeApp(); }
 
   initializeApp() {
     this.platform.ready().then(() => {
@@ -39,7 +62,7 @@ export class AppComponent {
         const url = this.router.url;
 
         if (url === '/tabs/overview' || url === '/tabs/settings') {
-          navigator['app'].exitApp();
+          App.exitApp();
         } else if (url === '/tabs/settings/ui'
           || url === '/tabs/settings/region'
           || url === '/tabs/settings/data-management'
@@ -52,35 +75,16 @@ export class AppComponent {
   }
 
   setupInternationalisation(): Observable<any> {
-    this.translateService.setDefaultLang('en');
+    this.translateService.setFallbackLang('en');
     const browserLang = this.translateService.getBrowserLang();
 
-    // Register locales in order for built in pipes to work
-    switch (browserLang) {
-      case 'de': {
-        registerLocaleData(localeDe);
-        return this.translateService.use('de');
-      }
-      case 'fr': {
-        registerLocaleData(localeFr);
-        return this.translateService.use('fr');
-      }
-      case 'it': {
-        registerLocaleData(localeIt);
-        return this.translateService.use('it');
-      }
-      case 'nb': {
-        registerLocaleData(localeNb);
-        return this.translateService.use('nb_NO');
-      }
-      case 'ru': {
-        registerLocaleData(localeRu);
-        return this.translateService.use('ru');
-      }
-      default: {
-        return this.translateService.use('en');
-      }
+    const locale = browserLang ? LOCALES[browserLang] : undefined;
+    if (!locale) {
+      return this.translateService.use('en');
     }
-  }
 
+    // Register locale data so Angular's built-in pipes format for this language.
+    registerLocaleData(locale.data);
+    return this.translateService.use(locale.lang);
+  }
 }
