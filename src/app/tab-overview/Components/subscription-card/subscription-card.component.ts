@@ -1,11 +1,11 @@
 import { Component, Input } from '@angular/core';
+import { addIcons } from 'ionicons';
+import { card, notifications, warning } from 'ionicons/icons';
 import { DatePipe, DecimalPipe, LowerCasePipe, NgIf, SlicePipe, TitleCasePipe } from '@angular/common';
 import { CostByBillingIntervalPipe } from '../../Pipes/cost-by-billing-interval.pipe';
 import { NextBillingPipe } from '../../Pipes/next-billing.pipe';
 import { NextCancelationPeriodDeadlinePipe } from '../../Pipes/next-cancelation-period-deadline.pipe';
 import { NotificationTimeForNextCancelationPeriodDeadlinePipe } from '../../Pipes/notification-time-for-next-cancelation-period-deadline.pipe';
-import { addIcons } from 'ionicons';
-import { card, notifications, warning } from 'ionicons/icons';
 import { ISubscription } from '../../Interfaces/subscriptionInterface';
 import { IonCard, IonCardContent, IonChip, IonCol, IonGrid, IonIcon, IonLabel, IonRow, ToastController } from '@ionic/angular';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -28,6 +28,7 @@ export class SubscriptionCardComponent {
     private notificationTimeForNextCancelationPeriodDeadlinePipe: NotificationTimeForNextCancelationPeriodDeadlinePipe,
     public translateService: TranslateService) {
     addIcons({ card, notifications, warning });
+
  }
 
   explainNextBilling(event: Event, subscription: ISubscription) {

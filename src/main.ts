@@ -9,8 +9,7 @@ import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
-import { NextCancelationPeriodDeadlinePipe } from './app/tab-overview/Pipes/next-cancelation-period-deadline.pipe';
-import { NotificationTimeForNextCancelationPeriodDeadlinePipe } from './app/tab-overview/Pipes/notification-time-for-next-cancelation-period-deadline.pipe';
+import { SUBSCRIPTION_PIPE_PROVIDERS } from './app/tab-overview/Pipes/pipe.providers';
 
 if (environment.production) {
   enableProdMode();
@@ -23,10 +22,7 @@ bootstrapApplication(AppComponent, {
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideHttpClient(),
-    // NotificationService injects both of these directly, so they need to be
-    // resolvable through DI as well as usable as template pipes.
-    NextCancelationPeriodDeadlinePipe,
-    NotificationTimeForNextCancelationPeriodDeadlinePipe,
+    SUBSCRIPTION_PIPE_PROVIDERS,
     provideTranslateService({
       fallbackLang: 'en',
       loader: provideTranslateHttpLoader({ prefix: './assets/i18n/', suffix: '.json' }),

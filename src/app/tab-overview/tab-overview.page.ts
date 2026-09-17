@@ -1,11 +1,11 @@
-import { Component, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild, inject } from '@angular/core';
+import { addIcons } from 'ionicons';
+import { add, closeOutline, filter, search, swapHorizontal } from 'ionicons/icons';
 import { DecimalPipe, NgFor, NgIf, SlicePipe, TitleCasePipe } from '@angular/common';
 import { SubscriptionCardComponent } from './Components/subscription-card/subscription-card.component';
 import { SearchSubscriptionsPipe } from './Pipes/search-subscriptions.pipe';
 import { SortSubscriptionsPipe } from './Pipes/sort-subscriptions.pipe';
 import { TotalCostByBillingIntervalPipe } from './Pipes/total-cost-by-billing-interval.pipe';
-import { addIcons } from 'ionicons';
-import { closeOutline } from 'ionicons/icons';
 import { FormsModule } from '@angular/forms';
 import { AlertController, IonButton, IonButtons, IonCard, IonCardContent, IonCol, IonContent, IonFabButton, IonGrid, IonHeader, IonIcon, IonItem, IonLabel, IonRow, IonSearchbar, IonTitle, IonToolbar, ModalController } from '@ionic/angular';
 import { ModalAddSubscriptionComponent } from './Components/modal-add-subscription/modal-add-subscription.component';
@@ -24,6 +24,7 @@ import { SplashScreen } from '@capacitor/splash-screen';
   imports: [IonButton, IonButtons, IonCard, IonCardContent, IonCol, IonContent, IonFabButton, IonGrid, IonHeader, IonIcon, IonItem, IonLabel, IonRow, IonSearchbar, IonTitle, IonToolbar, FormsModule, TranslatePipe, SearchSubscriptionsPipe, SortSubscriptionsPipe, TotalCostByBillingIntervalPipe, SubscriptionCardComponent, DecimalPipe, NgFor, NgIf, SlicePipe, TitleCasePipe],
 })
 export class TabOverviewPage {
+  private changeDetectorRef = inject(ChangeDetectorRef);
   @ViewChild('searchSubscriptions', { static: false }) searchSubscriptions: IonSearchbar;
 
   subscriptions: ISubscription[] = [];
@@ -41,7 +42,8 @@ export class TabOverviewPage {
     public storageService: StorageService,
     public translateService: TranslateService,
     public notificationService: NotificationService) {
-    addIcons({ closeOutline });
+    addIcons({ add, closeOutline, filter, search, swapHorizontal });
+
 }
 
   // Gets fired every page view so that settings which were made during runtime, etc. are immediately there
@@ -49,7 +51,8 @@ export class TabOverviewPage {
     this.retrieveSettingsFromStorage();
     this.retrieveSubscriptionsFromStorage().then(() => {
       this.areSubscriptionsFetched = true;
-      SplashScreen.hide(); 
+      this.changeDetectorRef.detectChanges();
+      SplashScreen.hide();
     });
   }
 
@@ -91,6 +94,7 @@ export class TabOverviewPage {
 
   async retrieveSubscriptionsFromStorage() {
     this.subscriptions = await this.storageService.retrieveSubscriptionsFromStorage();
+    this.changeDetectorRef.detectChanges();
   }
 
   async presentAddSubscriptionModal() {
@@ -148,6 +152,7 @@ export class TabOverviewPage {
 
   async retrieveSettingsFromStorage() {
     this.settings = await this.storageService.retrieveSettingsFromStorage();
+    this.changeDetectorRef.detectChanges();
     this.selectedBillingInterval = this.settings.defaultBillingInterval || 'MONTHS';
     this.sortSubscriptionsBy = this.settings.defaultSortBy || 'nextBillingAsc';
   }

@@ -23,6 +23,7 @@ export class DataManagementPage implements OnInit {
     private platform: Platform,
   ) {
     addIcons({ archive, arrowBack, refresh });
+
  }
 
   ngOnInit() {

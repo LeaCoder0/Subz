@@ -15,6 +15,7 @@ export class TabSettingsPage {
 
   constructor() {
     addIcons({ documentText, documents, easel, globe, informationCircle });
+
  }
 
 }

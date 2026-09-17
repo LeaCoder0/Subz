@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular';
-import { TranslatePipe } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
 import { list, settings } from 'ionicons/icons';
+import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-tabs',
@@ -13,5 +13,6 @@ import { list, settings } from 'ionicons/icons';
 export class TabsPage {
   constructor() {
     addIcons({ list, settings });
+
   }
 }

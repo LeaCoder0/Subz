@@ -1,4 +1,6 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, ViewChild, inject } from '@angular/core';
+import { addIcons } from 'ionicons';
+import { arrowBack, save } from 'ionicons/icons';
 import { DatePipe, LowerCasePipe, NgFor, NgIf, UpperCasePipe } from '@angular/common';
 import { AlertController, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonNote, IonRow, IonSelect, IonSelectOption, IonTitle, IonToolbar, ModalController } from '@ionic/angular';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -17,6 +19,7 @@ import { angularDateFormats, dateFormats } from '../../../tab-settings/region/DA
   imports: [IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonNote, IonRow, IonSelect, IonSelectOption, IonTitle, IonToolbar, ReactiveFormsModule, TranslatePipe, DatePipe, LowerCasePipe, NgFor, NgIf, UpperCasePipe],
 })
 export class ModalAddSubscriptionComponent implements OnInit {
+  private changeDetectorRef = inject(ChangeDetectorRef);
   @Input() existingSubscription?: ISubscription; // If passed, the component is used for updating an existing subscription
   @ViewChild('nameInput') nameInput: IonInput;
 
@@ -39,6 +42,8 @@ export class ModalAddSubscriptionComponent implements OnInit {
     private formBuilder: FormBuilder,
     private storageService: StorageService,
     public translateService: TranslateService) {
+    addIcons({ arrowBack, save });
+
     this.subscriptionForm = this.formBuilder.group({
       name: ['', Validators.required],
       description: [''],
@@ -141,6 +146,7 @@ export class ModalAddSubscriptionComponent implements OnInit {
 
   async retrieveSettingsFromStorage() {
     this.retrievedSettings = await this.storageService.retrieveSettingsFromStorage();
+    this.changeDetectorRef.detectChanges();
   }
 
   fillFormWithExistingSubscription(): void {

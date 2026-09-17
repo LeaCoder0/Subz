@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { NgFor } from '@angular/common';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { addIcons } from 'ionicons';
 import { arrowBack, calendar, cash } from 'ionicons/icons';
+import { NgFor } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
 import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonTitle, IonToolbar } from '@ionic/angular';
@@ -20,6 +20,7 @@ import { dateFormats } from './DATE_FORMATS';
   imports: [IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonTitle, IonToolbar, ReactiveFormsModule, RouterLink, TranslatePipe, NgFor],
 })
 export class RegionPage implements OnInit {
+  private changeDetectorRef = inject(ChangeDetectorRef);
   settingsForm: FormGroup;
   retrievedSettings: ISettings;
   currencyList = currencies;
@@ -31,6 +32,7 @@ export class RegionPage implements OnInit {
     private storageService: StorageService,
     public themeService: ThemeService) {
     addIcons({ arrowBack, calendar, cash });
+
 
     this.settingsForm = this.formBuilder.group({
       currency: this.currencyList[0],
@@ -69,6 +71,7 @@ export class RegionPage implements OnInit {
 
   async retrieveSettingsFromStorage(): Promise<void> {
     this.retrievedSettings = await this.storageService.retrieveSettingsFromStorage();
+    this.changeDetectorRef.detectChanges();
 
     Object.keys(this.settingsForm.controls).forEach(key => {
       if (this.retrievedSettings.hasOwnProperty(key)) {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { addIcons } from 'ionicons';
 import { arrowBack, calendar, helpBuoy, moon } from 'ionicons/icons';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -17,6 +17,7 @@ import { ISettings } from '../Interfaces/settingsInterface';
   imports: [IonButton, IonButtons, IonCheckbox, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonNote, IonTitle, IonToolbar, ReactiveFormsModule, RouterLink, TranslatePipe],
 })
 export class UiPage implements OnInit {
+  private changeDetectorRef = inject(ChangeDetectorRef);
   settingsForm: FormGroup;
   retrievedSettings: ISettings;
   settingsFormChangeSubscription: Subscription;
@@ -28,6 +29,7 @@ export class UiPage implements OnInit {
     private router: Router
   ) {
     addIcons({ arrowBack, calendar, helpBuoy, moon });
+
 
     this.settingsForm = this.formBuilder.group({
       forceDarkMode: false,
@@ -66,6 +68,7 @@ export class UiPage implements OnInit {
 
   async retrieveSettingsFromStorage(): Promise<void> {
     this.retrievedSettings = await this.storageService.retrieveSettingsFromStorage();
+    this.changeDetectorRef.detectChanges();
 
     Object.keys(this.settingsForm.controls).forEach(key => {
       if (this.retrievedSettings.hasOwnProperty(key)) {

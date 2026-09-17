@@ -17,6 +17,7 @@ export class LicensePage implements OnInit {
 
   constructor() {
     addIcons({ arrowBack });
+
  }
 
   ngOnInit() {
