@@ -4,6 +4,7 @@ import { registerLocaleData } from '@angular/common';
 import { IonApp, IonRouterOutlet, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { App } from '@capacitor/app';
+import { SplashScreen } from '@capacitor/splash-screen';
 
 import localeDe from '@angular/common/locales/de';
 import localeEl from '@angular/common/locales/el';
@@ -14,10 +15,10 @@ import localeRu from '@angular/common/locales/ru';
 import localeSv from '@angular/common/locales/sv';
 import localeTa from '@angular/common/locales/ta';
 import localeZh from '@angular/common/locales/zh-Hans';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { ThemeService } from './Services/theme.service';
 import { NotificationService } from './Services/notification.service';
-import { Observable } from 'rxjs';
+import { Observable, filter, take } from 'rxjs';
 
 /**
  * Locale data and the translation file each browser language maps to. `nb` and
@@ -52,6 +53,9 @@ export class AppComponent {
   constructor() { this.initializeApp(); }
 
   initializeApp() {
+    // Started before platform.ready() so it cannot miss the first navigation
+    this.hideSplashOnFirstPage();
+
     this.platform.ready().then(() => {
       this.setupInternationalisation().subscribe(() => { this.notificationService.scheduleNotifications(); });
       this.themeService.applyTheme();
@@ -69,6 +73,29 @@ export class AppComponent {
         this.router.navigate(['/' + segments.slice(0, -1).join('/')]);
       });
     });
+  }
+
+  /**
+   * launchAutoHide is off, so the splash stays until the app hides it. Doing that
+   * on the first completed navigation means it covers startup no matter which
+   * route lands first -- it used to live in the overview, which stopped being the
+   * landing screen when books arrived, leaving the splash up indefinitely.
+   */
+  private hideSplashOnFirstPage() {
+    // A splash that never hides is indistinguishable from the app not starting,
+    // so this also gives up after a few seconds rather than waiting forever.
+    const hide = () => SplashScreen.hide().catch(() => undefined);
+    setTimeout(hide, 5000);
+
+    if (this.router.navigated) {
+      hide();
+      return;
+    }
+
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      take(1),
+    ).subscribe(hide);
   }
 
   setupInternationalisation(): Observable<any> {
