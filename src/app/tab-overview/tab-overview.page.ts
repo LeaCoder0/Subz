@@ -71,6 +71,7 @@ export class TabOverviewPage {
     // New subscription array with Array.slice() because otherwise the Angular change detection for sorting pipe
     // wouldn't be called after adding new subscriptions leading to not show the new subscription until page refresh
     this.subscriptions = this.subscriptions.slice();
+    this.changeDetectorRef.detectChanges();
   }
 
   updateSubscription(sub: ISubscription): void {
@@ -81,11 +82,13 @@ export class TabOverviewPage {
     // New subscription array with Array.slice() because otherwise the Angular change detection for sorting pipe
     // wouldn't be called after updating subscriptions leading to not show the new subscription until page refresh
     this.subscriptions = this.subscriptions.slice();
+    this.changeDetectorRef.detectChanges();
   }
 
   deleteSubscription(sub: ISubscription): void {
     this.subscriptions = this.subscriptions.filter(subscription => subscription.id !== sub.id);
     this.saveSubscriptionsToStorage();
+    this.changeDetectorRef.detectChanges();
   }
 
   async saveSubscriptionsToStorage() {
@@ -246,6 +249,7 @@ export class TabOverviewPage {
       this.settings.defaultSortBy = sortBy;
       this.saveSettingsToStorage();
     }
+    this.changeDetectorRef.detectChanges();
   }
 
   dismissHelperText(attributeName: string): void {

@@ -33,3 +33,5 @@ npm-debug.log*
 /out-tsc
 /test-results
 /playwright-report
+/blob-report
+/.playwright

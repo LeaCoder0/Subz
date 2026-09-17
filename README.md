@@ -39,25 +39,58 @@ Subscription and contract management app for Android based on Ionic and Angular.
 
 ## Building
 
+This is a fork of [epinez/Subz](https://codeberg.org/epinez/Subz), modernised to
+Angular 22 / Ionic 9 / Capacitor 8. It builds under the application id
+`com.flasskamp.subz.dev` so it installs alongside the upstream F-Droid release
+rather than replacing it.
+
 ### Prerequisites
 
-- Node: Install the packages `nodejs` and `npm` or get it from: https://nodejs.org
-- Git: Install the `git` package or get it from: https://git-scm.com/download
-- Ionic: `[sudo] npm install -g @ionic/cli`
-- Android Studio / SDK: Get it from: https://developer.android.com/studio
+- **Node 22.22.3+** (a `.nvmrc` pins 26 — `nvm use`). Angular 22 refuses older
+  versions, and the Capacitor 8 CLI requires Node 22+.
+- **JDK 21.** Not 17: Capacitor 7+ hardcodes `JavaVersion.VERSION_21` in every
+  plugin module, and Gradle toolchains are strict, so a newer JDK will not
+  substitute either.
+- Android SDK with platform 36 (`compileSdk`/`targetSdk` are both 36).
+- Git.
+
+The Ionic CLI is no longer needed — the Angular CLI is a dev dependency.
 
 ### Build the app
 
-```
-git clone https://codeberg.org/epinez/Subz.git
+```sh
+git clone https://github.com/LeaCoder0/Subz.git
 cd Subz
-npm i
-ionic build --prod
+npm ci
+npm run build
 npx cap sync
-npx cap open android
+(cd android && JAVA_HOME=/path/to/jdk-21 ./gradlew assembleDebug)
 ```
 
-Now you can run a build within Android Studio. You could also run it in a browser with `ionic serve`. Enjoy!
+The APK lands in `android/app/build/outputs/apk/debug/`. `npx cap open android`
+still works if you have Android Studio installed.
+
+Unlike upstream, `npm run build` needs no `NODE_OPTIONS=--openssl-legacy-provider`
+workaround — the webpack 4 build that required it is gone.
+
+### Tests
+
+```sh
+npm test         # Vitest unit tests, covering the billing/cancellation date maths
+npm run lint     # eslint
+npm run e2e      # Playwright against the web build
+```
+
+### Backup format
+
+Backups are plain, unencrypted UTF-8 JSON (`{"subscriptions": [...], "settings": {...}}`),
+schema-compatible with upstream, so backups move in either direction between
+this fork and the F-Droid build.
+
+Export goes through the system share sheet and import through the system file
+picker. This is not cosmetic: from `targetSdk` 30 onward an app cannot read
+shared storage directly, so the previous "write to `Documents/subz-backup.json`"
+approach fails with `EACCES` no matter which permissions are declared.
 
 ## Contributing
 
