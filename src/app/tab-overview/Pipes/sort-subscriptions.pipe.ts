@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, inject } from '@angular/core';
 import { ISubscription } from '../Interfaces/subscriptionInterface';
 import { NextBillingPipe } from './next-billing.pipe';
 import { NextCancelationPeriodDeadlinePipe } from './next-cancelation-period-deadline.pipe';
@@ -9,12 +9,11 @@ import { billingIntervals } from '../BILLING_INTERVALS';
   name: 'sortSubscriptions'
 })
 export class SortSubscriptionsPipe implements PipeTransform {
-  availableBillingIntervals = billingIntervals;
+  private costByBillingIntervalPipe = inject(CostByBillingIntervalPipe);
+  private nextBillingPipe = inject(NextBillingPipe);
+  private nextCancelationPeriodDeadlinePipe = inject(NextCancelationPeriodDeadlinePipe);
 
-  constructor(
-    private costByBillingIntervalPipe: CostByBillingIntervalPipe,
-    private nextBillingPipe: NextBillingPipe,
-    private nextCancelationPeriodDeadlinePipe: NextCancelationPeriodDeadlinePipe) {}
+  availableBillingIntervals = billingIntervals;
 
   transform(subscriptions: ISubscription[], filterBy: string): ISubscription[] {
     if (!subscriptions) { return null; }

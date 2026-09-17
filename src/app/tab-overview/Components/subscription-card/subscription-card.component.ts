@@ -1,7 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { addIcons } from 'ionicons';
 import { card, notifications, warning } from 'ionicons/icons';
-import { DatePipe, DecimalPipe, LowerCasePipe, NgIf, SlicePipe, TitleCasePipe } from '@angular/common';
+import { DatePipe, DecimalPipe, LowerCasePipe, SlicePipe, TitleCasePipe } from '@angular/common';
 import { CostByBillingIntervalPipe } from '../../Pipes/cost-by-billing-interval.pipe';
 import { NextBillingPipe } from '../../Pipes/next-billing.pipe';
 import { NextCancelationPeriodDeadlinePipe } from '../../Pipes/next-cancelation-period-deadline.pipe';
@@ -14,19 +14,20 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
   selector: 'app-subscription-card',
   templateUrl: './subscription-card.component.html',
   styleUrls: ['./subscription-card.component.scss'],
-  imports: [IonCard, IonCardContent, IonChip, IonCol, IonGrid, IonIcon, IonLabel, IonRow, TranslatePipe, CostByBillingIntervalPipe, NextBillingPipe, NextCancelationPeriodDeadlinePipe, NotificationTimeForNextCancelationPeriodDeadlinePipe, DecimalPipe, LowerCasePipe, NgIf, SlicePipe, TitleCasePipe],
+  imports: [IonCard, IonCardContent, IonChip, IonCol, IonGrid, IonIcon, IonLabel, IonRow, TranslatePipe, CostByBillingIntervalPipe, NextBillingPipe, NextCancelationPeriodDeadlinePipe, NotificationTimeForNextCancelationPeriodDeadlinePipe, DecimalPipe, LowerCasePipe, SlicePipe, TitleCasePipe],
 })
 export class SubscriptionCardComponent {
+  private toastController = inject(ToastController);
+  private nextBillingPipe = inject(NextBillingPipe);
+  private nextCancelationPeriodDeadlinePipe = inject(NextCancelationPeriodDeadlinePipe);
+  private notificationTimeForNextCancelationPeriodDeadlinePipe = inject(NotificationTimeForNextCancelationPeriodDeadlinePipe);
+  translateService = inject(TranslateService);
+
   @Input() subscription: ISubscription;
   @Input() selectedBillingInterval: string;
   @Input() currency: string;
 
-  constructor(
-    private toastController: ToastController,
-    private nextBillingPipe: NextBillingPipe,
-    private nextCancelationPeriodDeadlinePipe: NextCancelationPeriodDeadlinePipe,
-    private notificationTimeForNextCancelationPeriodDeadlinePipe: NotificationTimeForNextCancelationPeriodDeadlinePipe,
-    public translateService: TranslateService) {
+  constructor() {
     addIcons({ card, notifications, warning });
 
  }

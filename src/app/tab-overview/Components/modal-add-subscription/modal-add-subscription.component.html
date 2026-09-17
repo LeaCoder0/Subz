@@ -6,8 +6,11 @@
       </ion-button>
     </ion-buttons>
     <ion-title>
-      <ng-container *ngIf="!existingSubscription; else updateMode">{{ 'TABS.OVERVIEW.ADD_SUBSCRIPTION' | translate }}</ng-container>
-      <ng-template #updateMode>{{ this.subscriptionForm.get('name').value }}</ng-template>
+      @if (!existingSubscription) {
+        {{ 'TABS.OVERVIEW.ADD_SUBSCRIPTION' | translate }}
+      } @else {
+        {{ this.subscriptionForm.get('name').value }}
+      }
     </ion-title>
     <ion-buttons slot="end">
       <ion-button color="primary" (click)="save()">
@@ -42,9 +45,9 @@
       <ion-item [color]="subscriptionForm.value.color | lowercase">
         <ion-label>{{ 'TABS.OVERVIEW.TILE_COLOR' | translate }}</ion-label>
         <ion-select cancelText="{{ 'GENERAL.CANCEL' | translate }}" okText="{{ 'GENERAL.OK' | translate }}" name="color" formControlName="color">
-          <ng-container *ngFor="let color of colors">
+          @for (color of colors; track color) {
             <ion-select-option [value]="color">{{ 'TABS.OVERVIEW.COLORS.'+color | uppercase | translate }}</ion-select-option>
-          </ng-container>
+          }
         </ion-select>
       </ion-item>
 
@@ -64,7 +67,7 @@
             [max]="maxDate"
             [showDefaultButtons]="true"
             [cancelText]="'GENERAL.CANCEL' | translate"
-            [doneText]="'GENERAL.DONE' | translate"></ion-datetime>
+          [doneText]="'GENERAL.DONE' | translate"></ion-datetime>
         </ng-template>
       </ion-modal>
 
@@ -82,9 +85,9 @@
 
             <ion-item>
               <ion-select cancelText="{{ 'GENERAL.CANCEL' | translate }}" okText="{{ 'GENERAL.OK' | translate }}" class="select-full-width" name="billingInterval" formControlName="billingInterval">
-                <ng-container *ngFor="let interval of availableBillingIntervals">
+                @for (interval of availableBillingIntervals; track interval) {
                   <ion-select-option [value]="interval">{{ 'TABS.OVERVIEW.CALENDAR_INTERVALS.'+interval | translate }}</ion-select-option>
-                </ng-container>
+                }
               </ion-select>
             </ion-item>
 
@@ -108,7 +111,7 @@
             [max]="maxDate"
             [showDefaultButtons]="true"
             [cancelText]="'GENERAL.CANCEL' | translate"
-            [doneText]="'GENERAL.DONE' | translate"></ion-datetime>
+          [doneText]="'GENERAL.DONE' | translate"></ion-datetime>
         </ng-template>
       </ion-modal>
 
@@ -126,9 +129,9 @@
 
             <ion-item>
               <ion-select cancelText="{{ 'GENERAL.CANCEL' | translate }}" okText="{{ 'GENERAL.OK' | translate }}" class="select-full-width" name="minimumContractDurationInterval" formControlName="minimumContractDurationInterval">
-                <ng-container *ngFor="let interval of availableBillingIntervals">
+                @for (interval of availableBillingIntervals; track interval) {
                   <ion-select-option [value]="interval">{{ 'TABS.OVERVIEW.CALENDAR_INTERVALS.'+interval | translate }}</ion-select-option>
-                </ng-container>
+                }
               </ion-select>
             </ion-item>
 
@@ -150,9 +153,9 @@
 
             <ion-item>
               <ion-select cancelText="{{ 'GENERAL.CANCEL' | translate }}" okText="{{ 'GENERAL.OK' | translate }}" class="select-full-width" name="extensionAfterMinimumContractDurationInterval" formControlName="extensionAfterMinimumContractDurationInterval">
-                <ng-container *ngFor="let interval of availableBillingIntervals">
+                @for (interval of availableBillingIntervals; track interval) {
                   <ion-select-option [value]="interval">{{ 'TABS.OVERVIEW.CALENDAR_INTERVALS.'+interval | translate }}</ion-select-option>
-                </ng-container>
+                }
               </ion-select>
             </ion-item>
 
@@ -174,9 +177,9 @@
 
             <ion-item>
               <ion-select cancelText="{{ 'GENERAL.CANCEL' | translate }}" okText="{{ 'GENERAL.OK' | translate }}" class="select-full-width" name="cancelationPeriodInterval" formControlName="cancelationPeriodInterval">
-                <ng-container *ngFor="let interval of availableBillingIntervals">
+                @for (interval of availableBillingIntervals; track interval) {
                   <ion-select-option [value]="interval">{{ 'TABS.OVERVIEW.CALENDAR_INTERVALS.'+interval | translate }}</ion-select-option>
-                </ng-container>
+                }
               </ion-select>
             </ion-item>
 
@@ -192,5 +195,7 @@
     </ion-list>
   </form>
 
-  <ion-button *ngIf="existingSubscription" expand="block" size="large" color="danger" style="padding-left: 8px; padding-right: 8px; font-size: medium;" (click)="showDeleteConfirmationModal()">{{ 'TABS.OVERVIEW.REMOVE_SUBSCRIPTION' | translate }}</ion-button>
+  @if (existingSubscription) {
+    <ion-button expand="block" size="large" color="danger" style="padding-left: 8px; padding-right: 8px; font-size: medium;" (click)="showDeleteConfirmationModal()">{{ 'TABS.OVERVIEW.REMOVE_SUBSCRIPTION' | translate }}</ion-button>
+  }
 </ion-content>

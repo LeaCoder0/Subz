@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
@@ -14,14 +14,13 @@ const BACKUP_FILE_NAME = 'subz-backup.json';
   providedIn: 'root'
 })
 export class StorageService {
+  private toastController = inject(ToastController);
+  private translateService = inject(TranslateService);
+
   defaultSettings: ISettings = {
     hideOverviewHelperTextGeneral: false,
     hideOverviewHelperTextMenuBar: false
   }
-
-  constructor(
-    private toastController: ToastController,
-    private translateService: TranslateService) { }
 
   async retrieveSubscriptionsFromStorage(): Promise<ISubscription[]> {
     const entries = await Preferences.get({ key: 'subscriptions' });

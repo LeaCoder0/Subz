@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { addIcons } from 'ionicons';
 import { arrowBack } from 'ionicons/icons';
-import { NgIf } from '@angular/common';
+
 import { TranslatePipe } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
 import { App } from '@capacitor/app';
@@ -11,15 +11,15 @@ import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonText, IonTitl
   selector: 'app-about',
   templateUrl: './about.page.html',
   styleUrls: ['./about.page.scss'],
-  imports: [IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonText, IonTitle, IonToolbar, RouterLink, TranslatePipe, NgIf],
+  imports: [IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonText, IonTitle, IonToolbar, RouterLink, TranslatePipe],
 })
 export class AboutPage implements OnInit {
+  private platform = inject(Platform);
+
   private changeDetectorRef = inject(ChangeDetectorRef);
   version: string;
 
-  constructor(
-    private platform: Platform
-  ) {
+  constructor() {
     addIcons({ arrowBack });
 
  }

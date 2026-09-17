@@ -1,7 +1,7 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { addIcons } from 'ionicons';
 import { arrowBack, calendar, cash } from 'ionicons/icons';
-import { NgFor } from '@angular/common';
+
 import { TranslatePipe } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
 import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonTitle, IonToolbar } from '@ionic/angular';
@@ -17,9 +17,13 @@ import { dateFormats } from './DATE_FORMATS';
   selector: 'app-region',
   templateUrl: './region.page.html',
   styleUrls: ['./region.page.scss'],
-  imports: [IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonTitle, IonToolbar, ReactiveFormsModule, RouterLink, TranslatePipe, NgFor],
+  imports: [IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonSelect, IonSelectOption, IonTitle, IonToolbar, ReactiveFormsModule, RouterLink, TranslatePipe],
 })
-export class RegionPage implements OnInit {
+export class RegionPage {
+  private formBuilder = inject(FormBuilder);
+  private storageService = inject(StorageService);
+  themeService = inject(ThemeService);
+
   private changeDetectorRef = inject(ChangeDetectorRef);
   settingsForm: FormGroup;
   retrievedSettings: ISettings;
@@ -27,10 +31,7 @@ export class RegionPage implements OnInit {
   dateFormatList = dateFormats;
   settingsFormChangeSubscription: Subscription;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private storageService: StorageService,
-    public themeService: ThemeService) {
+  constructor() {
     addIcons({ arrowBack, calendar, cash });
 
 
@@ -38,9 +39,6 @@ export class RegionPage implements OnInit {
       currency: this.currencyList[0],
       dateFormat: this.dateFormatList[0],
     });
-  }
-
-  ngOnInit() {
   }
 
   ionViewWillEnter() {

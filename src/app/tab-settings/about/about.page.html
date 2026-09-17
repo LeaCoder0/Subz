@@ -13,10 +13,10 @@
   <ion-text>
     <p>{{ 'APP.SHORT_DESCRIPTION' | translate }}</p>
 
-    <ng-container *ngIf="this.version">
+    @if (this.version) {
       <h3>{{ 'TABS.SETTINGS.ABOUT_VERSION' | translate }}</h3>
       {{ this.version }}
-    </ng-container>
+    }
 
     <h3>{{ 'TABS.SETTINGS.ABOUT_AUTHOR' | translate }}</h3>
     Christian Flaßkamp

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { filter } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
@@ -7,6 +7,9 @@ import { Platform } from '@ionic/angular';
   providedIn: 'root'
 })
 export class TabHideService {
+  private router = inject(Router);
+  private platform = inject(Platform);
+
   hideTabForPages = [
     '/tabs/settings/ui',
     '/tabs/settings/region',
@@ -15,7 +18,7 @@ export class TabHideService {
     '/tabs/settings/about',
   ];
 
-  constructor(private router: Router, private platform: Platform) {
+  constructor() {
     this.platform.ready().then(() => {
       this.subscribeToPageChanges();
     });

@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, inject } from '@angular/core';
 import { ISubscription } from '../Interfaces/subscriptionInterface';
 import { CostByBillingIntervalPipe } from './cost-by-billing-interval.pipe';
 
@@ -7,8 +7,8 @@ import { CostByBillingIntervalPipe } from './cost-by-billing-interval.pipe';
   pure: false // Otherwise a new added subscription wouldn't get added to the total cost directly
 })
 export class TotalCostByBillingIntervalPipe implements PipeTransform {
+  private costByBillingIntervalPipe = inject(CostByBillingIntervalPipe);
 
-  constructor(private costByBillingIntervalPipe: CostByBillingIntervalPipe) {}
 
   transform(subscriptions: ISubscription[], selectedBillingIntervalName: string): number {
     let totalCost = 0;

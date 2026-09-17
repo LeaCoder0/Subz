@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, ViewChild, inject } from '@angular/core';
 import { addIcons } from 'ionicons';
 import { add, closeOutline, filter, search, swapHorizontal } from 'ionicons/icons';
-import { DecimalPipe, NgFor, NgIf, SlicePipe, TitleCasePipe } from '@angular/common';
+import { DecimalPipe, SlicePipe, TitleCasePipe } from '@angular/common';
 import { SubscriptionCardComponent } from './Components/subscription-card/subscription-card.component';
 import { SearchSubscriptionsPipe } from './Pipes/search-subscriptions.pipe';
 import { SortSubscriptionsPipe } from './Pipes/sort-subscriptions.pipe';
@@ -21,9 +21,15 @@ import { SplashScreen } from '@capacitor/splash-screen';
   selector: 'app-tab-overview',
   templateUrl: 'tab-overview.page.html',
   styleUrls: ['tab-overview.page.scss'],
-  imports: [IonButton, IonButtons, IonCard, IonCardContent, IonCol, IonContent, IonFabButton, IonGrid, IonHeader, IonIcon, IonItem, IonLabel, IonRow, IonSearchbar, IonTitle, IonToolbar, FormsModule, TranslatePipe, SearchSubscriptionsPipe, SortSubscriptionsPipe, TotalCostByBillingIntervalPipe, SubscriptionCardComponent, DecimalPipe, NgFor, NgIf, SlicePipe, TitleCasePipe],
+  imports: [IonButton, IonButtons, IonCard, IonCardContent, IonCol, IonContent, IonFabButton, IonGrid, IonHeader, IonIcon, IonItem, IonLabel, IonRow, IonSearchbar, IonTitle, IonToolbar, FormsModule, TranslatePipe, SearchSubscriptionsPipe, SortSubscriptionsPipe, TotalCostByBillingIntervalPipe, SubscriptionCardComponent, DecimalPipe, SlicePipe, TitleCasePipe],
 })
 export class TabOverviewPage {
+  alertController = inject(AlertController);
+  modalController = inject(ModalController);
+  storageService = inject(StorageService);
+  translateService = inject(TranslateService);
+  notificationService = inject(NotificationService);
+
   private changeDetectorRef = inject(ChangeDetectorRef);
   @ViewChild('searchSubscriptions', { static: false }) searchSubscriptions: IonSearchbar;
 
@@ -36,12 +42,7 @@ export class TabOverviewPage {
   sortSubscriptionsBy: string;
   isSearchbarEnabled = false;
 
-  constructor(
-    public alertController: AlertController,
-    public modalController: ModalController,
-    public storageService: StorageService,
-    public translateService: TranslateService,
-    public notificationService: NotificationService) {
+  constructor() {
     addIcons({ add, closeOutline, filter, search, swapHorizontal });
 
 }
@@ -263,11 +264,6 @@ export class TabOverviewPage {
         this.searchSubscriptions.setFocus();
       }, 100);
     }
-  }
-
-  // Avoids re-rendering of subscriptions after page changes and prevents flickering
-  trackSubscriptionsBy(index: number): number {
-    return index;
   }
 
 }

@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
+  storageService = inject(StorageService);
 
-  constructor(public storageService: StorageService) { }
 
   applyTheme() {
     if (window.navigator.userAgent.includes('AndroidDarkMode')) {

@@ -1,12 +1,12 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      <ng-container *ngIf="areSubscriptionsFetched && subscriptions.length === 0">
+      @if (areSubscriptionsFetched && subscriptions.length === 0) {
         {{ 'TABS.OVERVIEW.OVERVIEW' | translate }}
-      </ng-container>
-      <ng-container *ngIf="subscriptions.length !== 0">
+      }
+      @if (subscriptions.length !== 0) {
         {{ subscriptions | searchSubscriptions:subscriptionSearchFilter | totalCostByBillingInterval:selectedBillingInterval | number : '1.2-2' : translateService.currentLang() }} {{ settings?.currency || '€' }} / {{ 'TABS.OVERVIEW.CALENDAR_INTERVALS.'+selectedBillingInterval | translate | titlecase | slice:0:1 }}
-      </ng-container>
+      }
     </ion-title>
     <ion-buttons slot="end">
       <ion-button [disabled]="subscriptions.length < 2" color="primary" (click)="changeChoosenBillingInterval()">
@@ -27,74 +27,73 @@
 
 <ion-content [fullscreen]="true">
 
-  <ion-card *ngIf="isSearchbarEnabled">
-    <ion-card-content class="ion-no-padding">
-      <ion-searchbar #searchSubscriptions class="searchbar-integrate" placeholder="{{ 'TABS.OVERVIEW.SEARCH_FOR_NAME_AND_DESCRIPTION' | translate }}" [(ngModel)]="subscriptionSearchFilter"></ion-searchbar>
-    </ion-card-content>
-  </ion-card>
+  @if (isSearchbarEnabled) {
+    <ion-card>
+      <ion-card-content class="ion-no-padding">
+        <ion-searchbar #searchSubscriptions class="searchbar-integrate" placeholder="{{ 'TABS.OVERVIEW.SEARCH_FOR_NAME_AND_DESCRIPTION' | translate }}" [(ngModel)]="subscriptionSearchFilter"></ion-searchbar>
+      </ion-card-content>
+    </ion-card>
+  }
 
-  <ion-card *ngIf="settings?.hideOverviewHelperTextGeneral === false">
-    <ion-item>
-      <ion-label>{{ 'TABS.OVERVIEW.NO_SUBSCRIPTION_HEADER' | translate }}</ion-label>
-      <ion-button fill="clear" slot="end" (click)="dismissHelperText('hideOverviewHelperTextGeneral')"><ion-icon name="close-outline"></ion-icon></ion-button>
-    </ion-item>
+  @if (settings?.hideOverviewHelperTextGeneral === false) {
+    <ion-card>
+      <ion-item>
+        <ion-label>{{ 'TABS.OVERVIEW.NO_SUBSCRIPTION_HEADER' | translate }}</ion-label>
+        <ion-button fill="clear" slot="end" (click)="dismissHelperText('hideOverviewHelperTextGeneral')"><ion-icon name="close-outline"></ion-icon></ion-button>
+      </ion-item>
+      <ion-card-content>
+        {{ 'TABS.OVERVIEW.NO_SUBSCRIPTION_TEXT' | translate }}
+      </ion-card-content>
+    </ion-card>
+  }
 
-    <ion-card-content>
-      {{ 'TABS.OVERVIEW.NO_SUBSCRIPTION_TEXT' | translate }}
-    </ion-card-content>
-  </ion-card>
+  @if (settings?.hideOverviewHelperTextMenuBar === false) {
+    <ion-card>
+      <ion-item>
+        <ion-label>{{ 'TABS.OVERVIEW.MENU_BUTTONS_HELPER_HEADER' | translate }}</ion-label>
+        <ion-button fill="clear" slot="end" (click)="dismissHelperText('hideOverviewHelperTextMenuBar')"><ion-icon name="close-outline"></ion-icon></ion-button>
+      </ion-item>
+      <ion-card-content>
+        <ion-grid class="ion-no-padding">
+          <ion-row class="ion-no-padding ion-align-items-center">
+            <ion-col class="ion-no-padding" size="auto">
+              <ion-fab-button size="small"><ion-icon md="search"></ion-icon></ion-fab-button>
+            </ion-col>
+            <ion-col class="ion-no-padding" style="margin-left: 1rem;">
+              {{ 'TABS.OVERVIEW.SEARCH_HELPER' | translate }}
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-no-padding ion-align-items-center">
+            <ion-col class="ion-no-padding" size="auto">
+              <ion-fab-button size="small"><ion-icon md="swap-horizontal"></ion-icon></ion-fab-button>
+            </ion-col>
+            <ion-col class="ion-no-padding" style="margin-left: 1rem;">
+              {{ 'TABS.OVERVIEW.CHANGE_CHOOSEN_BILLING_INTERVAL_HELPER' | translate }}
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-no-padding ion-align-items-center">
+            <ion-col class="ion-no-padding" size="auto">
+              <ion-fab-button size="small"><ion-icon md="filter"></ion-icon></ion-fab-button>
+            </ion-col>
+            <ion-col class="ion-no-padding" style="margin-left: 1rem;">
+              {{ 'TABS.OVERVIEW.SORT_HELPER' | translate }}
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-no-padding ion-align-items-center">
+            <ion-col class="ion-no-padding" size="auto">
+              <ion-fab-button size="small"><ion-icon md="add"></ion-icon></ion-fab-button>
+            </ion-col>
+            <ion-col class="ion-no-padding" style="margin-left: 1rem;">
+              {{ 'TABS.OVERVIEW.ADD_SUBSCRIPTION_HELPER' | translate }}
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+  }
 
-  <ion-card *ngIf="settings?.hideOverviewHelperTextMenuBar === false">
-    <ion-item>
-      <ion-label>{{ 'TABS.OVERVIEW.MENU_BUTTONS_HELPER_HEADER' | translate }}</ion-label>
-      <ion-button fill="clear" slot="end" (click)="dismissHelperText('hideOverviewHelperTextMenuBar')"><ion-icon name="close-outline"></ion-icon></ion-button>
-    </ion-item>
-
-    <ion-card-content>
-
-      <ion-grid class="ion-no-padding">
-        <ion-row class="ion-no-padding ion-align-items-center">
-          <ion-col class="ion-no-padding" size="auto">
-            <ion-fab-button size="small"><ion-icon md="search"></ion-icon></ion-fab-button>
-          </ion-col>
-          <ion-col class="ion-no-padding" style="margin-left: 1rem;">
-            {{ 'TABS.OVERVIEW.SEARCH_HELPER' | translate }}
-          </ion-col>
-        </ion-row>
-
-        <ion-row class="ion-no-padding ion-align-items-center">
-          <ion-col class="ion-no-padding" size="auto">
-            <ion-fab-button size="small"><ion-icon md="swap-horizontal"></ion-icon></ion-fab-button>
-          </ion-col>
-          <ion-col class="ion-no-padding" style="margin-left: 1rem;">
-            {{ 'TABS.OVERVIEW.CHANGE_CHOOSEN_BILLING_INTERVAL_HELPER' | translate }}
-          </ion-col>
-        </ion-row>
-
-        <ion-row class="ion-no-padding ion-align-items-center">
-          <ion-col class="ion-no-padding" size="auto">
-            <ion-fab-button size="small"><ion-icon md="filter"></ion-icon></ion-fab-button>
-          </ion-col>
-          <ion-col class="ion-no-padding" style="margin-left: 1rem;">
-            {{ 'TABS.OVERVIEW.SORT_HELPER' | translate }}
-          </ion-col>
-        </ion-row>
-
-        <ion-row class="ion-no-padding ion-align-items-center">
-          <ion-col class="ion-no-padding" size="auto">
-            <ion-fab-button size="small"><ion-icon md="add"></ion-icon></ion-fab-button>
-          </ion-col>
-          <ion-col class="ion-no-padding" style="margin-left: 1rem;">
-            {{ 'TABS.OVERVIEW.ADD_SUBSCRIPTION_HELPER' | translate }}
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-
-    </ion-card-content>
-  </ion-card>
-
-  <ng-container *ngFor="let sub of subscriptions | searchSubscriptions:subscriptionSearchFilter | sortSubscriptions:sortSubscriptionsBy; trackBy: trackSubscriptionsBy">
+  @for (sub of subscriptions | searchSubscriptions:subscriptionSearchFilter | sortSubscriptions:sortSubscriptionsBy; track $index) {
     <app-subscription-card [subscription]="sub" [selectedBillingInterval]="selectedBillingInterval" [currency]="settings?.currency" (click)="presentUpdateSubscriptionModal(sub)"></app-subscription-card>
-  </ng-container>
+  }
 
 </ion-content>

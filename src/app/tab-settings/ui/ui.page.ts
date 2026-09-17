@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { addIcons } from 'ionicons';
 import { arrowBack, calendar, helpBuoy, moon } from 'ionicons/icons';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -16,18 +16,18 @@ import { ISettings } from '../Interfaces/settingsInterface';
   styleUrls: ['./ui.page.scss'],
   imports: [IonButton, IonButtons, IonCheckbox, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonNote, IonTitle, IonToolbar, ReactiveFormsModule, RouterLink, TranslatePipe],
 })
-export class UiPage implements OnInit {
+export class UiPage {
+  private formBuilder = inject(FormBuilder);
+  private storageService = inject(StorageService);
+  themeService = inject(ThemeService);
+  private router = inject(Router);
+
   private changeDetectorRef = inject(ChangeDetectorRef);
   settingsForm: FormGroup;
   retrievedSettings: ISettings;
   settingsFormChangeSubscription: Subscription;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private storageService: StorageService,
-    public themeService: ThemeService,
-    private router: Router
-  ) {
+  constructor() {
     addIcons({ arrowBack, calendar, helpBuoy, moon });
 
 
@@ -35,9 +35,6 @@ export class UiPage implements OnInit {
       forceDarkMode: false,
       notificationBeforeCancelationPeriodInDays: null
     });
-  }
-
-  ngOnInit() {
   }
 
   ionViewWillEnter() {

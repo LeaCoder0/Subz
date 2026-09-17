@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { addIcons } from 'ionicons';
 import { archive, arrowBack, refresh } from 'ionicons/icons';
 import { RouterLink } from '@angular/router';
@@ -13,21 +13,18 @@ import { ThemeService } from '../../Services/theme.service';
   styleUrls: ['./data-management.page.scss'],
   imports: [IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonTitle, IonToolbar, RouterLink, TranslatePipe],
 })
-export class DataManagementPage implements OnInit {
+export class DataManagementPage {
+  alertController = inject(AlertController);
+  private storageService = inject(StorageService);
+  themeService = inject(ThemeService);
+  translateService = inject(TranslateService);
+  private platform = inject(Platform);
 
-  constructor(
-    public alertController: AlertController,
-    private storageService: StorageService,
-    public themeService: ThemeService,
-    public translateService: TranslateService,
-    private platform: Platform,
-  ) {
+
+  constructor() {
     addIcons({ archive, arrowBack, refresh });
 
  }
-
-  ngOnInit() {
-  }
 
   async backup(): Promise<void> {
     this.platform.ready().then(() => {

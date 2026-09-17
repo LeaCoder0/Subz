@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, inject } from '@angular/core';
 import { NextCancelationPeriodDeadlinePipe } from './next-cancelation-period-deadline.pipe';
 import { ISubscription } from '../Interfaces/subscriptionInterface';
 
@@ -6,8 +6,8 @@ import { ISubscription } from '../Interfaces/subscriptionInterface';
   name: 'notificationTimeForNextCancelationPeriodDeadline'
 })
 export class NotificationTimeForNextCancelationPeriodDeadlinePipe implements PipeTransform {
+  private nextCancelationPeriodDeadlinePipe = inject(NextCancelationPeriodDeadlinePipe);
 
-  constructor(private nextCancelationPeriodDeadlinePipe: NextCancelationPeriodDeadlinePipe) {}
 
   transform(subscription: ISubscription): { dueDate: Date, inDaysFromToday: number } {
     const notifyInDaysPrior = subscription.notificationBeforeCancelationPeriodInDays;

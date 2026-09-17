@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { LocalNotifications, LocalNotificationSchema } from '@capacitor/local-notifications';
 import { StorageService } from './storage.service';
 import { ISubscription } from '../tab-overview/Interfaces/subscriptionInterface';
@@ -13,12 +13,11 @@ import { formatDate } from '@angular/common';
   providedIn: 'root'
 })
 export class NotificationService {
+  private storageService = inject(StorageService);
+  private translateService = inject(TranslateService);
+  private nextCancelationPeriodDeadlinePipe = inject(NextCancelationPeriodDeadlinePipe);
+  private notificationTimeForNextCancelationPeriodDeadline = inject(NotificationTimeForNextCancelationPeriodDeadlinePipe);
 
-  constructor(
-    private storageService: StorageService,
-    private translateService: TranslateService,
-    private nextCancelationPeriodDeadlinePipe: NextCancelationPeriodDeadlinePipe,
-    private notificationTimeForNextCancelationPeriodDeadline: NotificationTimeForNextCancelationPeriodDeadlinePipe) { }
 
   async scheduleNotifications() {
     const subscriptions: ISubscription[] = await this.storageService.retrieveSubscriptionsFromStorage();

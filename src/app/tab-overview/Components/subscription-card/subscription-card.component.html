@@ -12,20 +12,26 @@
       </ion-row>
       <ion-row class="ion-no-padding">
         <ion-col class="ion-no-padding">
-          <ion-chip style="margin-left: 0" size="small" (click)="explainNextBilling($event, subscription)" *ngIf="subscription | nextBilling">
-            <ion-icon name="card" color="light"></ion-icon>
-            <ion-label color="light">{{ (subscription | nextBilling).inDaysFromToday }} {{ 'TABS.OVERVIEW.CALENDAR_INTERVALS.DAYS' | translate | titlecase | slice:0:1 }}</ion-label>
-          </ion-chip>
+          @if (subscription | nextBilling) {
+            <ion-chip style="margin-left: 0" size="small" (click)="explainNextBilling($event, subscription)">
+              <ion-icon name="card" color="light"></ion-icon>
+              <ion-label color="light">{{ (subscription | nextBilling).inDaysFromToday }} {{ 'TABS.OVERVIEW.CALENDAR_INTERVALS.DAYS' | translate | titlecase | slice:0:1 }}</ion-label>
+            </ion-chip>
+          }
 
-          <ion-chip size="small" (click)="explainNextCancelationPeriodDeadline($event, subscription)" *ngIf="subscription | nextCancelationPeriodDeadline">
-            <ion-icon name="warning" color="light"></ion-icon>
-            <ion-label color="light">{{ (subscription | nextCancelationPeriodDeadline).inDaysFromToday }} {{ 'TABS.OVERVIEW.CALENDAR_INTERVALS.DAYS' | translate | titlecase | slice:0:1 }}</ion-label>
-          </ion-chip>
+          @if (subscription | nextCancelationPeriodDeadline) {
+            <ion-chip size="small" (click)="explainNextCancelationPeriodDeadline($event, subscription)">
+              <ion-icon name="warning" color="light"></ion-icon>
+              <ion-label color="light">{{ (subscription | nextCancelationPeriodDeadline).inDaysFromToday }} {{ 'TABS.OVERVIEW.CALENDAR_INTERVALS.DAYS' | translate | titlecase | slice:0:1 }}</ion-label>
+            </ion-chip>
+          }
 
-          <ion-chip size="small" (click)="explainAlarmForNextCancelationPeriodDeadline($event, subscription)" *ngIf="subscription | notificationTimeForNextCancelationPeriodDeadline">
-            <ion-icon name="notifications" color="light" style="margin-inline-end: -4px;"></ion-icon>
-            <ion-label color="light"></ion-label>
-          </ion-chip>
+          @if (subscription | notificationTimeForNextCancelationPeriodDeadline) {
+            <ion-chip size="small" (click)="explainAlarmForNextCancelationPeriodDeadline($event, subscription)">
+              <ion-icon name="notifications" color="light" style="margin-inline-end: -4px;"></ion-icon>
+              <ion-label color="light"></ion-label>
+            </ion-chip>
+          }
         </ion-col>
         <ion-col class="ion-no-padding" style="margin: auto;" size="auto">
           <small>{{ subscription.cost | number : '1.2-2': translateService.currentLang() }} {{ currency || '€' }} / {{ subscription.billingEvery }} {{ 'TABS.OVERVIEW.CALENDAR_INTERVALS.'+subscription.billingInterval | translate | titlecase | slice:0:1 }}</small>
